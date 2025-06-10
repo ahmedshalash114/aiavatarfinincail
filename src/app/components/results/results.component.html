@@ -1,0 +1,54 @@
+<div class="results-container">
+  <div class="avatar-section">
+    <div class="avatar" [class]="avatarAnimation">
+      <div class="teddy-face">
+        <div class="ears">
+          <div class="ear left"></div>
+          <div class="ear right"></div>
+        </div>
+        <div class="face">
+          <div class="eyes">
+            <div class="eye left"></div>
+            <div class="eye right"></div>
+          </div>
+          <div class="nose"></div>
+          <div class="mouth" [class]="avatarExpression"></div>
+          <div class="blush left"></div>
+          <div class="blush right"></div>
+        </div>
+      </div>
+    </div>
+    <div class="avatar-message" [class.typing]="isTyping">
+      {{ avatarMessage }}
+    </div>
+  </div>
+
+  <div class="results-section">
+    <div class="profile-summary">
+      <h2>Your Financial Profile</h2>
+      <div class="score-card">
+        <div class="score-circle">
+          <span class="score">{{ profileScore }}</span>
+          <span class="rank">{{ profileRank }}</span>
+        </div>
+        <div class="score-details">
+          <p>Based on your financial information and goals, you're at the {{ profileRank.toLowerCase() }} level.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="recommendations">
+      <h3>Personalized Recommendations</h3>
+      <div class="recommendations-list">
+        <div class="recommendation-card" *ngFor="let recommendation of recommendations">
+          <div class="recommendation-icon">💡</div>
+          <p>{{ recommendation }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn-primary" (click)="startOver()">Start Over</button>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,65 @@
+{
+  "kyc": {
+    "title": "Know Your Customer",
+    "personalInfo": {
+      "title": "Personal Information",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter your full name",
+      "age": "Age",
+      "agePlaceholder": "Enter your age",
+      "occupation": "Occupation",
+      "occupationPlaceholder": "Enter your occupation"
+    },
+    "financialInfo": {
+      "title": "Financial Information",
+      "annualIncome": "Annual Income",
+      "annualIncomePlaceholder": "Enter your annual income",
+      "savings": "Current Savings",
+      "savingsPlaceholder": "Enter your current savings",
+      "investments": "Current Investments",
+      "investmentsPlaceholder": "Enter your current investments"
+    },
+    "goals": {
+      "title": "Financial Goals",
+      "shortTermGoal": "Short-term Goal (1-2 years)",
+      "shortTermGoalPlaceholder": "Enter your short-term goal",
+      "longTermGoal": "Long-term Goal (5+ years)",
+      "longTermGoalPlaceholder": "Enter your long-term goal",
+      "riskTolerance": "Risk Tolerance",
+      "riskTolerancePlaceholder": "Select your risk tolerance",
+      "riskOptions": {
+        "conservative": "Conservative",
+        "moderate": "Moderate",
+        "aggressive": "Aggressive"
+      }
+    },
+    "preferences": {
+      "title": "Preferences",
+      "investmentStyle": "Investment Style",
+      "investmentStylePlaceholder": "Select your investment style",
+      "investmentOptions": {
+        "passive": "Passive",
+        "active": "Active",
+        "balanced": "Balanced"
+      },
+      "preferredContact": "Preferred Contact Method",
+      "preferredContactPlaceholder": "Select preferred contact method",
+      "contactOptions": {
+        "email": "Email",
+        "phone": "Phone",
+        "app": "In-App"
+      }
+    },
+    "navigation": {
+      "previous": "Previous",
+      "next": "Next",
+      "complete": "Complete Profile"
+    },
+    "avatar": {
+      "welcome": "Hello! I'm your Financial Twin assistant. Let's get to know you better!",
+      "financialInfo": "Great! Now let's talk about your financial situation. Don't worry, I'm here to help!",
+      "goals": "What are your financial goals? I'm excited to help you achieve them!",
+      "preferences": "Almost done! Just a few more preferences to personalize your experience."
+    }
+  }
+} 

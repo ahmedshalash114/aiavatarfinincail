@@ -1,0 +1,65 @@
+{
+  "kyc": {
+    "title": "تعرف على عميلك",
+    "personalInfo": {
+      "title": "المعلومات الشخصية",
+      "fullName": "الاسم الكامل",
+      "fullNamePlaceholder": "أدخل اسمك الكامل",
+      "age": "العمر",
+      "agePlaceholder": "أدخل عمرك",
+      "occupation": "المهنة",
+      "occupationPlaceholder": "أدخل مهنتك"
+    },
+    "financialInfo": {
+      "title": "المعلومات المالية",
+      "annualIncome": "الدخل السنوي",
+      "annualIncomePlaceholder": "أدخل دخلك السنوي",
+      "savings": "الادخار الحالي",
+      "savingsPlaceholder": "أدخل مدخراتك الحالية",
+      "investments": "الاستثمارات الحالية",
+      "investmentsPlaceholder": "أدخل استثماراتك الحالية"
+    },
+    "goals": {
+      "title": "الأهداف المالية",
+      "shortTermGoal": "الهدف قصير المدى (1-2 سنوات)",
+      "shortTermGoalPlaceholder": "أدخل هدفك قصير المدى",
+      "longTermGoal": "الهدف طويل المدى (5+ سنوات)",
+      "longTermGoalPlaceholder": "أدخل هدفك طويل المدى",
+      "riskTolerance": "تحمل المخاطر",
+      "riskTolerancePlaceholder": "اختر مستوى تحملك للمخاطر",
+      "riskOptions": {
+        "conservative": "محافظ",
+        "moderate": "معتدل",
+        "aggressive": "عدواني"
+      }
+    },
+    "preferences": {
+      "title": "التفضيلات",
+      "investmentStyle": "نمط الاستثمار",
+      "investmentStylePlaceholder": "اختر نمط استثمارك",
+      "investmentOptions": {
+        "passive": "سلبي",
+        "active": "نشط",
+        "balanced": "متوازن"
+      },
+      "preferredContact": "طريقة الاتصال المفضلة",
+      "preferredContactPlaceholder": "اختر طريقة الاتصال المفضلة",
+      "contactOptions": {
+        "email": "البريد الإلكتروني",
+        "phone": "الهاتف",
+        "app": "في التطبيق"
+      }
+    },
+    "navigation": {
+      "previous": "السابق",
+      "next": "التالي",
+      "complete": "إكمال الملف"
+    },
+    "avatar": {
+      "welcome": "مرحباً! أنا مساعدك المالي. دعنا نتعرف عليك بشكل أفضل!",
+      "financialInfo": "ممتاز! الآن دعنا نتحدث عن وضعك المالي. لا تقلق، أنا هنا للمساعدة!",
+      "goals": "ما هي أهدافك المالية؟ أنا متحمس لمساعدتك في تحقيقها!",
+      "preferences": "اقتربنا من النهاية! فقط بضع تفضيلات إضافية لتخصيص تجربتك."
+    }
+  }
+} 

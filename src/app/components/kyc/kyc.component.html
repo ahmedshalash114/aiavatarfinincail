@@ -1,0 +1,118 @@
+<div class="kyc-container">
+  <div class="avatar-section">
+    <img
+      class="avatar-img"
+      [src]="selectedGender === 'male' ? 'assets/avatars/male.png' : 'assets/avatars/female.png'"
+      alt="AI Financial Advisor Avatar"
+    />
+    <div class="avatar-message" [class.typing]="isTyping">
+      {{ avatarMessage }}
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="progress-bar">
+      <div class="progress" [style.width.%]="(currentStep / totalSteps) * 100"></div>
+    </div>
+
+    <form [formGroup]="kycForm" (ngSubmit)="onSubmit()">
+      <!-- Step 1: Gender Selection -->
+      <div class="form-step" *ngIf="currentStep === 1">
+        <h2>Select Your Avatar</h2>
+        <div class="form-group">
+          <label>
+            <input type="radio" formControlName="gender" value="male" /> Male
+          </label>
+          <label>
+            <input type="radio" formControlName="gender" value="female" /> Female
+          </label>
+        </div>
+      </div>
+
+      <!-- Step 2: Personal Information -->
+      <div class="form-step" *ngIf="currentStep === 2" formGroupName="personalInfo">
+        <h2>Personal Information</h2>
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <input type="text" id="fullName" formControlName="fullName" placeholder="Enter your full name">
+        </div>
+        <div class="form-group">
+          <label for="age">Age</label>
+          <input type="number" id="age" formControlName="age" placeholder="Enter your age">
+        </div>
+        <div class="form-group">
+          <label for="occupation">Occupation</label>
+          <input type="text" id="occupation" formControlName="occupation" placeholder="Enter your occupation">
+        </div>
+      </div>
+
+      <!-- Step 3: Financial Information -->
+      <div class="form-step" *ngIf="currentStep === 3" formGroupName="financialInfo">
+        <h2>Financial Information</h2>
+        <div class="form-group">
+          <label for="annualIncome">Annual Income</label>
+          <input type="number" id="annualIncome" formControlName="annualIncome" placeholder="Enter your annual income">
+        </div>
+        <div class="form-group">
+          <label for="savings">Current Savings</label>
+          <input type="number" id="savings" formControlName="savings" placeholder="Enter your current savings">
+        </div>
+        <div class="form-group">
+          <label for="investments">Current Investments</label>
+          <input type="number" id="investments" formControlName="investments" placeholder="Enter your current investments">
+        </div>
+      </div>
+
+      <!-- Step 4: Financial Goals -->
+      <div class="form-step" *ngIf="currentStep === 4" formGroupName="goals">
+        <h2>Financial Goals</h2>
+        <div class="form-group">
+          <label for="shortTermGoal">Short-term Goal</label>
+          <input type="text" id="shortTermGoal" formControlName="shortTermGoal" placeholder="Enter your short-term goal">
+        </div>
+        <div class="form-group">
+          <label for="longTermGoal">Long-term Goal</label>
+          <input type="text" id="longTermGoal" formControlName="longTermGoal" placeholder="Enter your long-term goal">
+        </div>
+        <div class="form-group">
+          <label for="riskTolerance">Risk Tolerance</label>
+          <select id="riskTolerance" formControlName="riskTolerance">
+            <option value="">Select your risk tolerance</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Step 5: Investment Preferences -->
+      <div class="form-step" *ngIf="currentStep === 5" formGroupName="preferences">
+        <h2>Investment Preferences</h2>
+        <div class="form-group">
+          <label for="investmentStyle">Investment Style</label>
+          <select id="investmentStyle" formControlName="investmentStyle">
+            <option value="">Select your investment style</option>
+            <option value="conservative">Conservative</option>
+            <option value="moderate">Moderate</option>
+            <option value="aggressive">Aggressive</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="preferredContact">Preferred Contact Method</label>
+          <select id="preferredContact" formControlName="preferredContact">
+            <option value="">Select your preferred contact method</option>
+            <option value="email">Email</option>
+            <option value="phone">Phone</option>
+            <option value="sms">SMS</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-navigation">
+        <button type="button" class="btn-secondary" *ngIf="currentStep > 1" (click)="previousStep()">Previous</button>
+        <button type="button" class="btn-primary" *ngIf="currentStep < totalSteps" (click)="nextStep()">Next</button>
+        <button type="submit" class="btn-success" *ngIf="currentStep === totalSteps">Submit</button>
+      </div>
+    </form>
+  </div>
+</div> 
