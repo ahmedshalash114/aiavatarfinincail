@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-kyc',
@@ -125,7 +126,8 @@ export class KYCComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private storageService: StorageService
   ) {
     this.kycForm = this.fb.group({
       gender: ['male', Validators.required],
@@ -308,10 +310,8 @@ export class KYCComponent implements OnInit {
 
   onSubmit(): void {
     if (this.kycForm.valid) {
-      // Save form data to localStorage
-      localStorage.setItem('kycFormData', JSON.stringify(this.kycForm.value));
-      
-      // Navigate to results page
+      // Save form data using storage service
+      this.storageService.setItem('kycFormData', this.kycForm.value);
       this.router.navigate(['/results']);
     }
   }

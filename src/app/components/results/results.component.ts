@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-results',
@@ -18,11 +19,18 @@ export class ResultsComponent implements OnInit {
   avatarAnimation = 'celebrate';
   isTyping = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private storageService: StorageService
+  ) {}
 
   ngOnInit(): void {
-    // Get the form data from localStorage
-    const formData = JSON.parse(localStorage.getItem('kycFormData') || '{}');
+    // Get the form data using storage service
+    const formData = this.storageService.getItem('kycFormData');
+    if (!formData) {
+      this.router.navigate(['/kyc']);
+      return;
+    }
     this.calculateProfileScore(formData);
     this.generateRecommendations(formData);
     this.updateAvatarMessage();
@@ -106,7 +114,8 @@ export class ResultsComponent implements OnInit {
   }
 
   startOver(): void {
-    localStorage.removeItem('kycFormData');
+    // Clear form data using storage service
+    this.storageService.removeItem('kycFormData');
     this.router.navigate(['/kyc']);
   }
 } 
