@@ -1,6 +1,6 @@
 [build]
-  command = "npm run build:ssr"
-  publish = "dist/my-financial-twin/browser"
+  command = "npm run build"
+  publish = "dist/my-financial-twin"
 
 [[plugins]]
   package = "@netlify/angular-runtime"
