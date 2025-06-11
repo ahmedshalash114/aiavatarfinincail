@@ -1,15 +1,6 @@
 [build]
   command = "npm run build:ssr"
-  publish = "dist/my-financial-twin/browser/browser"
-  functions = "dist/my-financial-twin/server"
-
-[build.environment]
-  NODE_VERSION = "18"
+  publish = "dist/my-financial-twin/browser"
 
 [[plugins]]
   package = "@netlify/angular-runtime"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200 
