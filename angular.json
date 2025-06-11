@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/my-financial-twin/browser/browser/browser",
+            "outputPath": "dist/my-financial-twin",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -85,32 +85,28 @@
           "defaultConfiguration": "development"
         },
         "server": {
-          "builder": "@angular-devkit/build-angular:server",
-          "options": {
-            "outputPath": "dist/my-financial-twin/server",
-            "main": "src/main.server.ts",
-            "tsConfig": "tsconfig.server.json",
-            "outputHashing": "none"
-          },
-          "configurations": {
-            "production": {
-              "outputHashing": "media",
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "sourceMap": false,
-              "optimization": true
-            },
-            "development": {
-              "sourceMap": true,
-              "optimization": false
-            }
-          },
-          "defaultConfiguration": "production"
-        },
+  "builder": "@angular-devkit/build-angular:server",
+  "options": {
+    "outputPath": "dist/my-financial-twin/server",
+    "main": "src/main.server.ts",
+    "tsConfig": "tsconfig.server.json"
+  },
+  "configurations": {
+    "production": {
+      "outputHashing": "media",
+      "fileReplacements": [
+        {
+          "replace": "src/environments/environment.ts",
+          "with": "src/environments/environment.prod.ts"
+        }
+      ],
+      "sourceMap": false,
+      "optimization": true
+    }
+  },
+  "defaultConfiguration": "production"
+}
+,
         "prerender": {
           "builder": "@angular-devkit/build-angular:prerender",
           "options": {
