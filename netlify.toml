@@ -6,6 +6,7 @@
 [build.environment]
   NODE_VERSION = "18"
   NPM_FLAGS = "--legacy-peer-deps"
+  NETLIFY_USE_YARN = "true"
 
 [[plugins]]
   package = "@netlify/angular-runtime"
@@ -18,3 +19,4 @@
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["@angular/platform-server"]
+  included_files = ["dist/my-financial-twin/server/**/*"]
