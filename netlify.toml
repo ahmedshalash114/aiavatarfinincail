@@ -1,4 +1,1 @@
-[build]
-  command = "npm run build:ssr"
-  publish = "dist/my-financial-twin/browser"
-  functions = "dist/my-financial-twin/server"
+
