@@ -93,11 +93,7 @@
             "outputHashing": "none",
             "optimization": true,
             "sourceMap": false,
-            "extractLicenses": false,
-            "buildOptimizer": true,
-            "vendorChunk": true,
-            "commonChunk": true,
-            "namedChunks": false
+            "extractLicenses": false
           },
           "configurations": {
             "production": {
