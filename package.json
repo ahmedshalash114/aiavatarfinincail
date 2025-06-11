@@ -7,8 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "build:ssr": "ng build && ng run My-Financial-Twin:server",
-  "serve:ssr": "node dist/my-financial-twin/server/main.js"
+    "build:ssr": "ng build && ng run My-Financial-Twin:server && ng run My-Financial-Twin:prerender",
+    "serve:ssr": "node dist/my-financial-twin/server/main.js"
   },
   "private": true,
   "dependencies": {
