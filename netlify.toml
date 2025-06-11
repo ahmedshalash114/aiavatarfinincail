@@ -1,22 +1,3 @@
 [build]
   command = "npm run build:ssr"
   publish = "dist/my-financial-twin/browser"
-  functions = "dist/my-financial-twin/server"
-
-[build.environment]
-  NODE_VERSION = "18"
-  NPM_FLAGS = "--legacy-peer-deps"
-  NETLIFY_USE_YARN = "true"
-
-[[plugins]]
-  package = "@netlify/angular-runtime"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-[functions]
-  node_bundler = "esbuild"
-  external_node_modules = ["@angular/platform-server"]
-  included_files = ["dist/my-financial-twin/server/**/*"]
