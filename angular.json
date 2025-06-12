@@ -113,24 +113,18 @@
           "defaultConfiguration": "production"
         },
         "prerender": {
-          "builder": "@angular-devkit/build-angular:prerender",
-          "options": {
-            "routes": [
-              "/"
-            ]
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "My-Financial-Twin:build:production",
-              "serverTarget": "My-Financial-Twin:server:production"
-            },
-            "development": {
-              "browserTarget": "My-Financial-Twin:build:development",
-              "serverTarget": "My-Financial-Twin:server:development"
-            }
-          },
-          "defaultConfiguration": "production"
-        },
+  "builder": "@angular-devkit/build-angular:prerender",
+  "options": {
+    "routes": ["/"]
+  },
+  "configurations": {
+    "production": {
+      "browserTarget": "My-Financial-Twin:build:production",
+      "serverTarget": "My-Financial-Twin:server:production"
+    }
+  },
+  "defaultConfiguration": "production"
+},
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"
         },
