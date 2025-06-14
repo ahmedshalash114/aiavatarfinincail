@@ -3,24 +3,75 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { StorageService } from '../../services/storage.service';
+import { faFaceSmile, faFaceGrinStars, faFaceGrinTears, faFaceSurprise, faFaceGrinBeam, faFaceMeh, faFaceFrown } from '@fortawesome/free-solid-svg-icons';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
+
+// Define the AvatarExpression type outside the class
+type AvatarExpression = 'happy' | 'thinking' | 'excited' | 'concerned' | 'success' | 'surprised' | 'proud';
 
 @Component({
   selector: 'app-kyc',
   templateUrl: './kyc.component.html',
   styleUrls: ['./kyc.component.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [CommonModule, ReactiveFormsModule ,FontAwesomeModule]
+
 })
 export class KYCComponent implements OnInit {
   kycForm: FormGroup;
   currentStep = 1;
   totalSteps = 5;
   avatarMessage = '';
-  avatarExpression = 'happy';
+  avatarExpression: AvatarExpression = 'happy';
   avatarAnimation = 'idle';
   isTyping = false;
   profileRank = 0;
   selectedGender: 'male' | 'female' = 'male';
+
+  // Dashboard visualization properties
+  orbits = [
+    {
+      icon: '💰',
+      tooltip: 'Income',
+      class: 'income',
+      delay: '0s'
+    },
+    {
+      icon: '📈',
+      tooltip: 'Investments',
+      class: 'investments',
+      delay: '0.5s'
+    },
+    {
+      icon: '🎯',
+      tooltip: 'Goals',
+      class: 'goals',
+      delay: '1s'
+    },
+    {
+      icon: '💡',
+      tooltip: 'Insights',
+      class: 'insights',
+      delay: '1.5s'
+    }
+  ];
+
+  progressRings = [
+    {
+      progress: '0%',
+      class: 'primary'
+    },
+    {
+      progress: '0%',
+      class: 'secondary'
+    },
+    {
+      progress: '0%',
+      class: 'tertiary'
+    }
+  ];
 
   // Avatar expressions and their corresponding messages
   private expressions = {
@@ -33,8 +84,23 @@ export class KYCComponent implements OnInit {
     proud: 'proud'
   };
 
+  // Add expressionIcons property
+  private expressionIcons: Record<AvatarExpression, string> = {
+    happy: 'fa-face-smile',
+    thinking: 'fa-face-thinking',
+    excited: 'fa-face-grin-stars',
+    concerned: 'fa-face-worried',
+    success: 'fa-face-grin-tears',
+    surprised: 'fa-face-surprise',
+    proud: 'fa-face-grin-beam'
+  };
+
   // Step-specific messages with expressions
-  private stepMessages = [
+  private stepMessages: Array<{
+    message: string;
+    expression: AvatarExpression;
+    animation: string;
+  }> = [
     {
       message: 'Hi there! I\'m your financial teddy bear. Let\'s get to know each other better! 🧸',
       expression: 'happy',
@@ -106,7 +172,11 @@ export class KYCComponent implements OnInit {
   };
 
   // Profile ranking messages
-  private rankingMessages = {
+  private rankingMessages: Record<'beginner' | 'intermediate' | 'advanced', {
+    message: string;
+    expression: AvatarExpression;
+    animation: string;
+  }> = {
     beginner: {
       message: 'Welcome to your financial journey! I\'ll be here to guide you every step of the way. 🌟',
       expression: 'happy',
@@ -124,6 +194,16 @@ export class KYCComponent implements OnInit {
     }
   };
 
+  iconMap: Record<AvatarExpression, IconDefinition> = {
+    happy: faFaceSmile,
+    thinking: faFaceMeh,
+    excited: faFaceGrinStars,
+    concerned: faFaceFrown,
+    success: faFaceGrinTears,
+    surprised: faFaceSurprise,
+    proud: faFaceGrinBeam
+  };
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -137,13 +217,13 @@ export class KYCComponent implements OnInit {
         occupation: ['', Validators.required]
       }),
       financialInfo: this.fb.group({
-        annualIncome: ['', Validators.required],
-        savings: ['', Validators.required],
-        investments: ['', Validators.required]
+        annualIncome: [0, [Validators.required, Validators.min(1)]],
+        savings: [0, [Validators.required, Validators.min(1)]],
+        investments: [0, [Validators.required, Validators.min(1)]]
       }),
       goals: this.fb.group({
-        shortTermGoal: ['', Validators.required],
-        longTermGoal: ['', Validators.required],
+        shortTermGoal: [0, [Validators.required, Validators.min(1)]],
+        longTermGoal: [0, [Validators.required, Validators.min(1)]],
         riskTolerance: ['', Validators.required]
       }),
       preferences: this.fb.group({
@@ -166,11 +246,24 @@ export class KYCComponent implements OnInit {
     this.updateAvatarMessage();
   }
 
+  getCurrentIcon(): IconDefinition {
+    return this.iconMap[this.avatarExpression] || this.iconMap.happy;
+  }
+
+  updateProgressRings(): void {
+    const progress = (this.currentStep / this.totalSteps) * 100;
+    this.progressRings = this.progressRings.map((ring, index) => ({
+      ...ring,
+      progress: `${progress}%`
+    }));
+  }
+
   nextStep(): void {
     if (this.currentStep < this.totalSteps) {
       this.currentStep++;
       this.updateAvatarMessage();
-      this.triggerAnimation('success');
+      this.updateProgressRings();
+      this.triggerAnimation('thinking');
       this.updateProfileRank();
       
       // Add celebration message for completing steps
@@ -192,6 +285,7 @@ export class KYCComponent implements OnInit {
     if (this.currentStep > 1) {
       this.currentStep--;
       this.updateAvatarMessage();
+      this.updateProgressRings();
       this.triggerAnimation('thinking');
       
       // Add encouraging message when going back

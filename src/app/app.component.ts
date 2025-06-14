@@ -3,11 +3,12 @@ import { RouterOutlet } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { KYCComponent } from './components/kyc/kyc.component';
 import { ResultsComponent } from './components/results/results.component';
+import { LandingComponent } from './components/landing/landing.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ReactiveFormsModule, KYCComponent, ResultsComponent],
+  imports: [RouterOutlet, ReactiveFormsModule, KYCComponent, ResultsComponent, LandingComponent],
   template: `
     <main>
       <router-outlet></router-outlet>

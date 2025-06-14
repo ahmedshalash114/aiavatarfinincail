@@ -1,12 +1,42 @@
 <div class="kyc-container">
-  <div class="avatar-section">
-    <img
-      class="avatar-img"
-      [src]="selectedGender === 'male' ? 'assets/avatars/male.png' : 'assets/avatars/female.png'"
-      alt="AI Financial Advisor Avatar"
-    />
-    <div class="avatar-message" [class.typing]="isTyping">
-      {{ avatarMessage }}
+  <div class="interaction-section">
+    <div class="dashboard-container" [class.typing]="isTyping">
+      <div class="dashboard" [class]="avatarAnimation">
+        <!-- Main Circle -->
+        <div class="main-circle">
+          <div class="pulse-ring"></div>
+          <div class="inner-circle">
+            <div class="icon-container">
+              <fa-icon [icon]="getCurrentIcon()" class="dashboard-icon"></fa-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orbiting Elements -->
+        <div class="orbit-container">
+          <div class="orbit" *ngFor="let orbit of orbits; let i = index" [style.animation-delay]="orbit.delay">
+            <div class="orbit-element" [class]="orbit.class">
+              <span class="element-icon">{{ orbit.icon }}</span>
+              <div class="element-tooltip">{{ orbit.tooltip }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Rings -->
+        <div class="progress-rings">
+          <div class="ring" *ngFor="let ring of progressRings" [style.--progress]="ring.progress">
+            <svg viewBox="0 0 100 100">
+              <circle class="ring-bg" cx="50" cy="50" r="45"/>
+              <circle class="ring-progress" cx="50" cy="50" r="45"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Message Display -->
+        <div class="message-display" [class.typing]="isTyping">
+          {{ avatarMessage }}
+        </div>
+      </div>
     </div>
   </div>
 
@@ -41,7 +71,7 @@
           <input type="number" id="age" formControlName="age" placeholder="Enter your age">
         </div>
         <div class="form-group">
-          <label for="occupation">Occupation</label>
+          <label for="occupation">Occupation if freelancer mention your profession </label>
           <input type="text" id="occupation" formControlName="occupation" placeholder="Enter your occupation">
         </div>
       </div>
@@ -49,30 +79,120 @@
       <!-- Step 3: Financial Information -->
       <div class="form-step" *ngIf="currentStep === 3" formGroupName="financialInfo">
         <h2>Financial Information</h2>
-        <div class="form-group">
-          <label for="annualIncome">Annual Income</label>
-          <input type="number" id="annualIncome" formControlName="annualIncome" placeholder="Enter your annual income">
+        <div class="form-group slider-group">
+          <label for="annualIncome">Annual Income (EGP)</label>
+          <div class="slider-container">
+            <input 
+              type="range" 
+              id="annualIncome" 
+              formControlName="annualIncome" 
+              min="1" 
+              max="500000" 
+              step="1000"
+              class="custom-slider"
+            >
+            <div class="slider-value">
+              <span class="value">{{ kycForm.get('financialInfo.annualIncome')?.value | number:'1.0-0' }}</span>
+              <span class="currency">EGP</span>
+            </div>
+            <div class="slider-labels">
+              <span>1 EGP</span>
+              <span>500K EGP</span>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="savings">Current Savings</label>
-          <input type="number" id="savings" formControlName="savings" placeholder="Enter your current savings">
+        <div class="form-group slider-group">
+          <label for="savings">Current Savings (EGP)</label>
+          <div class="slider-container">
+            <input 
+              type="range" 
+              id="savings" 
+              formControlName="savings" 
+              min="1" 
+              max="500000" 
+              step="1000"
+              class="custom-slider"
+            >
+            <div class="slider-value">
+              <span class="value">{{ kycForm.get('financialInfo.savings')?.value | number:'1.0-0' }}</span>
+              <span class="currency">EGP</span>
+            </div>
+            <div class="slider-labels">
+              <span>1 EGP</span>
+              <span>500K EGP</span>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="investments">Current Investments</label>
-          <input type="number" id="investments" formControlName="investments" placeholder="Enter your current investments">
+        <div class="form-group slider-group">
+          <label for="investments">Current Investments (EGP)</label>
+          <div class="slider-container">
+            <input 
+              type="range" 
+              id="investments" 
+              formControlName="investments" 
+              min="1" 
+              max="500000" 
+              step="1000"
+              class="custom-slider"
+            >
+            <div class="slider-value">
+              <span class="value">{{ kycForm.get('financialInfo.investments')?.value | number:'1.0-0' }}</span>
+              <span class="currency">EGP</span>
+            </div>
+            <div class="slider-labels">
+              <span>1 EGP</span>
+              <span>500K EGP</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Step 4: Financial Goals -->
       <div class="form-step" *ngIf="currentStep === 4" formGroupName="goals">
         <h2>Financial Goals</h2>
-        <div class="form-group">
-          <label for="shortTermGoal">Short-term Goal</label>
-          <input type="text" id="shortTermGoal" formControlName="shortTermGoal" placeholder="Enter your short-term goal">
+        <div class="form-group slider-group">
+          <label for="shortTermGoal">Short-term Goal Amount (EGP)</label>
+          <div class="slider-container">
+            <input 
+              type="range" 
+              id="shortTermGoal" 
+              formControlName="shortTermGoal" 
+              min="1" 
+              max="500000" 
+              step="1000"
+              class="custom-slider"
+            >
+            <div class="slider-value">
+              <span class="value">{{ kycForm.get('goals.shortTermGoal')?.value | number:'1.0-0' }}</span>
+              <span class="currency">EGP</span>
+            </div>
+            <div class="slider-labels">
+              <span>1 EGP</span>
+              <span>500K EGP</span>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="longTermGoal">Long-term Goal</label>
-          <input type="text" id="longTermGoal" formControlName="longTermGoal" placeholder="Enter your long-term goal">
+        <div class="form-group slider-group">
+          <label for="longTermGoal">Long-term Goal Amount (EGP)</label>
+          <div class="slider-container">
+            <input 
+              type="range" 
+              id="longTermGoal" 
+              formControlName="longTermGoal" 
+              min="1" 
+              max="500000" 
+              step="1000"
+              class="custom-slider"
+            >
+            <div class="slider-value">
+              <span class="value">{{ kycForm.get('goals.longTermGoal')?.value | number:'1.0-0' }}</span>
+              <span class="currency">EGP</span>
+            </div>
+            <div class="slider-labels">
+              <span>1 EGP</span>
+              <span>500K EGP</span>
+            </div>
+          </div>
         </div>
         <div class="form-group">
           <label for="riskTolerance">Risk Tolerance</label>
