@@ -1,5 +1,5 @@
 [build]
-  command = "npm install --legacy-peer-deps && ng build --configuration production"
+  command = "npm install --legacy-peer-deps && ng build --configuration production --no-build-optimizer"
   publish = "dist/my-financial-twin/browser"
 
 [[redirects]]
