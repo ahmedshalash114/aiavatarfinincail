@@ -1,54 +1,104 @@
 <div class="results-container">
-  <div class="avatar-section">
-    <div class="avatar" [class]="avatarAnimation">
-      <div class="teddy-face">
-        <div class="ears">
-          <div class="ear left"></div>
-          <div class="ear right"></div>
-        </div>
-        <div class="face">
-          <div class="eyes">
-            <div class="eye left"></div>
-            <div class="eye right"></div>
+  <div class="financial-profile">
+    <div class="profile-header">
+      <h1>Your Financial Profile Analysis</h1>
+      <div class="profile-score">
+        <span>Your Profile Score: <strong>{{ profileScore }}</strong></span>
+      </div>
+      <div class="profile-progress">
+        <div class="progress-ring">
+          <svg viewBox="0 0 100 100">
+            <circle class="progress-ring-circle-bg" cx="50" cy="50" r="45"/>
+            <circle class="progress-ring-circle" cx="50" cy="50" r="45" [style.strokeDashoffset]="getProgressOffset()"/>
+          </svg>
+          <div class="progress-text">
+            <span class="percentage">{{ profileScore }}%</span>
+            <span class="label">Profile Score</span>
           </div>
-          <div class="nose"></div>
-          <div class="mouth" [class]="avatarExpression"></div>
-          <div class="blush left"></div>
-          <div class="blush right"></div>
         </div>
       </div>
     </div>
-    <div class="avatar-message" [class.typing]="isTyping">
-      {{ avatarMessage }}
+
+    <div class="profile-metrics">
+      <div class="metric-card">
+        <div class="metric-icon">🎯</div>
+        <div class="metric-info">
+          <span class="metric-label">Investment Profile</span>
+          <span class="metric-value">{{ profileRank }}</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">📊</div>
+        <div class="metric-info">
+          <span class="metric-label">Risk Level</span>
+          <span class="metric-value">{{ getRiskLevel() }}</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">⏳</div>
+        <div class="metric-info">
+          <span class="metric-label">Investment Timeline</span>
+          <span class="metric-value">{{ getTimelineLabel() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-insights">
+      <div class="insight-card">
+        <h3>Profile Insights</h3>
+        <div class="insight-content">
+          <p>{{ getProfileInsight() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="privacy-notice">
+      <div class="notice-icon">🔒</div>
+      <p>Your data is protected and secure. We use industry-standard encryption to ensure your privacy.</p>
     </div>
   </div>
 
   <div class="results-section">
-    <div class="profile-summary">
-      <h2>Your Financial Profile</h2>
-      <div class="score-card">
-        <div class="score-circle">
-          <span class="score">{{ profileScore }}</span>
-          <span class="rank">{{ profileRank }}</span>
-        </div>
-        <div class="score-details">
-          <p>Based on your financial information and goals, you're at the {{ profileRank.toLowerCase() }} level.</p>
+    <div class="dashboard-section">
+      <h2>Your Financial Profile Dashboard</h2>
+      <div class="dashboard-gauges">
+        <div class="gauge" *ngFor="let metric of dashboardMetrics">
+          <svg class="gauge-svg" viewBox="0 0 100 100">
+            <circle class="gauge-bg" cx="50" cy="50" r="45" />
+            <circle class="gauge-fg" cx="50" cy="50" r="45"
+              [attr.stroke-dasharray]="gaugeCircumference"
+              [attr.stroke-dashoffset]="getGaugeOffset(metric.value)"
+            />
+          </svg>
+          <div class="gauge-icon">{{ metric.icon }}</div>
+          <div class="gauge-value">{{ metric.value }}<span class="gauge-unit">%</span></div>
+          <div class="gauge-label">{{ metric.label }}</div>
         </div>
       </div>
     </div>
 
-    <div class="recommendations">
-      <h3>Personalized Recommendations</h3>
-      <div class="recommendations-list">
-        <div class="recommendation-card" *ngFor="let recommendation of recommendations">
-          <div class="recommendation-icon">💡</div>
-          <p>{{ recommendation }}</p>
+    <div class="card-deck-section">
+      <h3>Profile Insights</h3>
+      <div class="card-deck">
+        <div class="profile-card" *ngFor="let card of profileCards">
+          <div class="card-icon">{{ card.icon }}</div>
+          <div class="card-title">{{ card.title }}</div>
+          <div class="card-message">{{ card.message }}</div>
         </div>
       </div>
+    </div>
+
+    <div class="disclaimer">
+      <p class="disclaimer-text">
+        <strong>Disclaimer:</strong> This tool provides general educational insights and does not constitute personalized financial advice. Please consult with a qualified financial advisor for personalized recommendations.
+      </p>
     </div>
 
     <div class="action-buttons">
       <button class="btn-primary" (click)="startOver()">Start Over</button>
+      <button class="btn-secondary" (click)="downloadReport()">Download Report</button>
     </div>
   </div>
 </div> 

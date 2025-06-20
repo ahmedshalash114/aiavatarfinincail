@@ -3,9 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { StorageService } from '../../services/storage.service';
+import { KYCApiService, KYCData } from '../../services/kyc-api.service';
 import { faFaceSmile, faFaceGrinStars, faFaceGrinTears, faFaceSurprise, faFaceGrinBeam, faFaceMeh, faFaceFrown } from '@fortawesome/free-solid-svg-icons';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ChartOptions, ChartType, ChartData, Chart } from 'chart.js';
 
 
 // Define the AvatarExpression type outside the class
@@ -22,13 +24,15 @@ type AvatarExpression = 'happy' | 'thinking' | 'excited' | 'concerned' | 'succes
 export class KYCComponent implements OnInit {
   kycForm: FormGroup;
   currentStep = 1;
-  totalSteps = 5;
+  totalSteps = 7;
   avatarMessage = '';
-  avatarExpression: AvatarExpression = 'happy';
+  avatarExpression = 'happy';
   avatarAnimation = 'idle';
   isTyping = false;
   profileRank = 0;
   selectedGender: 'male' | 'female' = 'male';
+  showValidationError = false;
+  profileScore: number = 0;
 
   // Dashboard visualization properties
   orbits = [
@@ -95,31 +99,42 @@ export class KYCComponent implements OnInit {
     proud: 'fa-face-grin-beam'
   };
 
-  // Step-specific messages with expressions
-  private stepMessages: Array<{
-    message: string;
-    expression: AvatarExpression;
-    animation: string;
-  }> = [
+  // Step-specific messages
+  private stepMessages = [
     {
-      message: 'Hi there! I\'m your financial teddy bear. Let\'s get to know each other better! 🧸',
+      message: 'Let\'s start with some basic information about you! 🎯',
       expression: 'happy',
       animation: 'wave'
     },
     {
-      message: 'Great! Now, let\'s talk about your financial situation. Don\'t worry, I\'m here to help!',
+      message: 'Great! Now, let\'s talk about your financial situation. 💰',
       expression: 'thinking',
       animation: 'nod'
     },
     {
-      message: 'Perfect! What are your financial goals? I\'m excited to help you achieve them!',
+      message: 'What are your main goals for investing? 🎯',
       expression: 'excited',
       animation: 'bounce'
     },
     {
-      message: 'Almost done! Just a few more preferences to set. You\'re doing great!',
+      message: 'How do you feel about investment fluctuations? 📈',
+      expression: 'thinking',
+      animation: 'nod'
+    },
+    {
+      message: 'Almost done! Just one more question about your timeline. ⏰',
       expression: 'success',
       animation: 'spin'
+    },
+    {
+      message: 'Perfect! Let\'s analyze your profile and create your personalized plan! 🎉',
+      expression: 'excited',
+      animation: 'celebrate'
+    },
+    {
+      message: 'One last thing! Want free personalized analysis & updates? 💡',
+      expression: 'proud',
+      animation: 'celebrate'
     }
   ];
 
@@ -168,6 +183,10 @@ export class KYCComponent implements OnInit {
     preferredContact: {
       valid: 'Noted! I\'ll make sure to reach out through your preferred method.',
       invalid: 'Please select how you\'d like to be contacted.'
+    },
+    email: {
+      valid: 'Great! You\'ll be hearing from us soon. 📧',
+      invalid: 'Please enter a valid email address.'
     }
   };
 
@@ -204,31 +223,86 @@ export class KYCComponent implements OnInit {
     proud: faFaceGrinBeam
   };
 
+  radarChartLabels: string[] = [
+    'Income Level',
+    'Risk Tolerance',
+    'Investment Knowledge',
+    'Financial Goals',
+    'Time Horizon'
+  ];
+
+  radarChartData: ChartData<'radar'> = {
+    labels: this.radarChartLabels,
+    datasets: [
+      {
+        label: 'Your Profile',
+        data: [],
+        fill: true,
+        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+        borderColor: 'rgba(76, 175, 80, 1)',
+        pointBackgroundColor: 'rgba(76, 175, 80, 1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(76, 175, 80, 1)'
+      }
+    ]
+  };
+
+  radarChartOptions: ChartOptions<'radar'> = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false
+      }
+    },
+    scales: {
+      r: {
+        angleLines: { display: true },
+        suggestedMin: 0,
+        suggestedMax: 100,
+        pointLabels: {
+          font: { size: 16 }
+        }
+      }
+    }
+  };
+
+  radarChartPlugins = [];
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private kycApiService: KYCApiService
   ) {
     this.kycForm = this.fb.group({
-      gender: ['male', Validators.required],
-      personalInfo: this.fb.group({
+      step1: this.fb.group({
         fullName: ['', Validators.required],
         age: ['', [Validators.required, Validators.min(18)]],
-        occupation: ['', Validators.required]
+        gender: ['male', Validators.required]
       }),
-      financialInfo: this.fb.group({
-        annualIncome: [0, [Validators.required, Validators.min(1)]],
-        savings: [0, [Validators.required, Validators.min(1)]],
-        investments: [0, [Validators.required, Validators.min(1)]]
+      step2: this.fb.group({
+        occupation: ['', Validators.required],
+        annualIncome: ['', [Validators.required, Validators.min(0)]]
       }),
-      goals: this.fb.group({
-        shortTermGoal: [0, [Validators.required, Validators.min(1)]],
-        longTermGoal: [0, [Validators.required, Validators.min(1)]],
-        riskTolerance: ['', Validators.required]
+      step3: this.fb.group({
+        savings: ['', [Validators.required, Validators.min(0)]],
+        investments: ['', [Validators.required, Validators.min(0)]]
       }),
-      preferences: this.fb.group({
-        investmentStyle: ['', Validators.required],
-        preferredContact: ['', Validators.required]
+      step4: this.fb.group({
+        shortTermGoal: ['', Validators.required],
+        longTermGoal: ['', Validators.required]
+      }),
+      step5: this.fb.group({
+        riskTolerance: ['', Validators.required],
+        investmentStyle: ['', Validators.required]
+      }),
+      step6: this.fb.group({
+        investmentKnowledge: ['', Validators.required],
+        preferredContact: ['email', Validators.required]
+      }),
+      step7: this.fb.group({
+        email: ['', [Validators.email]]
       })
     });
 
@@ -244,10 +318,20 @@ export class KYCComponent implements OnInit {
 
   ngOnInit(): void {
     this.updateAvatarMessage();
+    this.setRadarChartData();
+    if (this.kycForm) {
+      this.kycForm.valueChanges.subscribe(() => {
+        this.updateProgressRings();
+        this.updateProfileRank();
+        this.setRadarChartData();
+        this.updateProfileScore();
+      });
+    }
+    this.updateProfileScore();
   }
 
   getCurrentIcon(): IconDefinition {
-    return this.iconMap[this.avatarExpression] || this.iconMap.happy;
+    return this.iconMap[this.avatarExpression as AvatarExpression] || this.iconMap.happy;
   }
 
   updateProgressRings(): void {
@@ -258,25 +342,44 @@ export class KYCComponent implements OnInit {
     }));
   }
 
+  isCurrentStepValid(): boolean {
+    if (this.currentStep > this.totalSteps) {
+      return true;
+    }
+    if (this.currentStep === 7) { // Email step is optional
+      return true;
+    }
+    const currentGroup = this.kycForm.get(`step${this.currentStep}`);
+    return currentGroup ? currentGroup.valid : false;
+  }
+
   nextStep(): void {
-    if (this.currentStep < this.totalSteps) {
-      this.currentStep++;
-      this.updateAvatarMessage();
-      this.updateProgressRings();
-      this.triggerAnimation('thinking');
-      this.updateProfileRank();
-      
-      // Add celebration message for completing steps
-      if (this.currentStep === this.totalSteps) {
-        setTimeout(() => {
-          this.isTyping = true;
-          this.avatarMessage = 'Fantastic! You\'ve completed all the steps. Let\'s review your financial profile! 🎉';
-          this.avatarExpression = 'excited';
-          this.triggerAnimation('celebrate');
+    if (this.isCurrentStepValid()) {
+      if (this.currentStep < this.totalSteps) {
+        this.currentStep++;
+        this.updateAvatarMessage();
+        this.triggerAnimation('next');
+        this.updateProgressRings();
+        this.showValidationError = false;
+        // Update profile rank based on current step
+        this.updateProfileRank();
+        
+        // Add a delay to simulate typing and thinking
+        if (this.currentStep === this.totalSteps) {
           setTimeout(() => {
-            this.isTyping = false;
-          }, 500);
-        }, 1000);
+            this.updateRankingMessage('advanced');
+          }, 1000);
+        }
+      }
+    } else {
+      this.showValidationError = true;
+      const currentGroup = this.kycForm.get(`step${this.currentStep}`) as FormGroup;
+      if (currentGroup) {
+        // Mark all fields as touched to show errors
+        Object.keys(currentGroup.controls).forEach(field => {
+          const control = currentGroup.get(field);
+          control?.markAsTouched({ onlySelf: true });
+        });
       }
     }
   }
@@ -285,8 +388,8 @@ export class KYCComponent implements OnInit {
     if (this.currentStep > 1) {
       this.currentStep--;
       this.updateAvatarMessage();
+      this.triggerAnimation('previous');
       this.updateProgressRings();
-      this.triggerAnimation('thinking');
       
       // Add encouraging message when going back
       setTimeout(() => {
@@ -301,14 +404,15 @@ export class KYCComponent implements OnInit {
   }
 
   updateAvatarMessage(): void {
-    const stepData = this.stepMessages[this.currentStep - 1];
     this.isTyping = true;
-    this.avatarMessage = stepData.message;
     setTimeout(() => {
+      if (this.currentStep <= this.totalSteps) {
+        const stepInfo = this.stepMessages[this.currentStep - 1];
+        this.avatarMessage = stepInfo.message;
+        this.setAvatarExpression(stepInfo.expression as AvatarExpression);
+      }
       this.isTyping = false;
-    }, 500);
-    this.avatarExpression = stepData.expression;
-    this.avatarAnimation = stepData.animation;
+    }, 500); // Typing effect duration
   }
 
   handleFormChanges(): void {
@@ -345,22 +449,24 @@ export class KYCComponent implements OnInit {
 
   updateProfileRank(): void {
     // Calculate profile rank based on form completion and financial knowledge
-    const financialInfo = this.kycForm.get('financialInfo')?.value;
-    const goals = this.kycForm.get('goals')?.value;
+    const savings = this.kycForm.get('step3.savings')?.value;
+    const investments = this.kycForm.get('step3.investments')?.value;
+    const riskTolerance = this.kycForm.get('step5.riskTolerance')?.value;
+    const investmentKnowledge = this.kycForm.get('step6.investmentKnowledge')?.value;
     
     let score = 0;
     
     // Score based on financial information
-    if (financialInfo) {
-      if (financialInfo.investments > 0) score += 2;
-      if (financialInfo.savings > 0) score += 1;
-    }
+    if (investments && investments > 0) score += 2;
+    if (savings && savings > 0) score += 1;
     
-    // Score based on goals
-    if (goals) {
-      if (goals.riskTolerance === 'high') score += 2;
-      else if (goals.riskTolerance === 'medium') score += 1;
-    }
+    // Score based on risk tolerance
+    if (riskTolerance === 'high') score += 2;
+    else if (riskTolerance === 'medium') score += 1;
+    
+    // Score based on investment knowledge
+    if (investmentKnowledge === 'advanced') score += 2;
+    else if (investmentKnowledge === 'intermediate') score += 1;
     
     this.profileRank = score;
     
@@ -385,14 +491,8 @@ export class KYCComponent implements OnInit {
     this.avatarAnimation = rankingData.animation;
   }
 
-  getCurrentFormGroup(): FormGroup | null {
-    switch (this.currentStep) {
-      case 1: return this.kycForm.get('personalInfo') as FormGroup;
-      case 2: return this.kycForm.get('financialInfo') as FormGroup;
-      case 3: return this.kycForm.get('goals') as FormGroup;
-      case 4: return this.kycForm.get('preferences') as FormGroup;
-      default: return null;
-    }
+  getCurrentFormGroup(): FormGroup {
+    return this.kycForm;
   }
 
   triggerAnimation(animation: string): void {
@@ -404,9 +504,227 @@ export class KYCComponent implements OnInit {
 
   onSubmit(): void {
     if (this.kycForm.valid) {
-      // Save form data using storage service
-      this.storageService.setItem('kycFormData', this.kycForm.value);
-      this.router.navigate(['/results']);
+      // Prepare the data for the API
+      const formData = this.kycForm.value;
+      const kycData: KYCData = {
+        fullName: formData.step1?.fullName || '',
+        email: formData.step7?.email || '',
+        gender: formData.step1?.gender || '',
+        age: formData.step1?.age || 0,
+        occupation: formData.step2?.occupation || '',
+        monthlyIncome: (formData.step2?.annualIncome || 0) / 12, // Convert annual to monthly
+        savings: formData.step3?.savings || 0,
+        investments: formData.step3?.investments || 0,
+        investmentGoal: formData.step4?.shortTermGoal || '',
+        riskTolerance: this.getRiskToleranceLabel(formData.step5?.riskTolerance),
+        investmentTimeline: '5 years', // Default value
+        shortTermGoal: formData.step4?.shortTermGoal || '',
+        longTermGoal: formData.step4?.longTermGoal || '',
+        investmentStyle: this.getInvestmentStyleLabel(formData.step5?.investmentStyle),
+        preferredContact: this.getPreferredContactLabel(formData.step6?.preferredContact),
+        profileScore: this.profileScore,
+        profileRank: this.getProfileRankLabel()
+      };
+
+      // Send data to backend
+      this.kycApiService.submitKYCData(kycData).subscribe({
+        next: (response) => {
+          console.log('KYC data submitted successfully:', response);
+          // Store form data locally as well
+          this.storageService.setItem('kycFormData', this.kycForm.value);
+          this.storageService.setItem('kycApiResponse', response);
+          // Navigate to results
+          this.router.navigate(['/results']);
+        },
+        error: (error) => {
+          console.error('Error submitting KYC data:', error);
+          // Still navigate to results even if API call fails
+          this.storageService.setItem('kycFormData', this.kycForm.value);
+          this.router.navigate(['/results']);
+        }
+      });
     }
+  }
+
+  // Helper methods to convert form values to API format
+  private getRiskToleranceLabel(risk: string): string {
+    switch (risk) {
+      case 'low': return 'Low';
+      case 'medium': return 'Medium';
+      case 'high': return 'High';
+      default: return 'Medium';
+    }
+  }
+
+  private getInvestmentStyleLabel(style: string): string {
+    switch (style) {
+      case 'hands_on': return 'Active';
+      case 'hands_off': return 'Passive';
+      default: return 'Moderate';
+    }
+  }
+
+  private getPreferredContactLabel(contact: string): string {
+    switch (contact) {
+      case 'email': return 'Email';
+      case 'phone': return 'Phone';
+      case 'none': return 'None';
+      default: return 'Email';
+    }
+  }
+
+  private getProfileRankLabel(): string {
+    if (this.profileScore >= 80) return 'Advanced';
+    if (this.profileScore >= 50) return 'Intermediate';
+    return 'Beginner';
+  }
+
+  getProgressOffset(): number {
+    const circumference = 2 * Math.PI * 45; // 2πr where r=45
+    const progress = (this.currentStep / this.totalSteps) * 100;
+    return circumference - (progress / 100) * circumference;
+  }
+
+  getInvestmentGoalLabel(): string {
+    const goal = this.kycForm.get('investmentGoal')?.value;
+    switch (goal) {
+      case 'grow':
+        return 'Growth Focused';
+      case 'protect':
+        return 'Capital Protection';
+      case 'unsure':
+        return 'Exploring Options';
+      default:
+        return 'Not Selected';
+    }
+  }
+
+  getRiskProfileLabel(): string {
+    const risk = this.kycForm.get('riskTolerance')?.value;
+    switch (risk) {
+      case 'ok':
+        return 'Risk Tolerant';
+      case 'moderate':
+        return 'Moderate Risk';
+      case 'not_ok':
+        return 'Risk Averse';
+      default:
+        return 'Not Selected';
+    }
+  }
+
+  getProfileInsight(): string {
+    const annualIncome = this.kycForm.get('step2.annualIncome')?.value;
+    const shortTermGoal = this.kycForm.get('step4.shortTermGoal')?.value;
+    const riskTolerance = this.kycForm.get('step5.riskTolerance')?.value;
+
+    if (!annualIncome || !shortTermGoal || !riskTolerance) {
+      return 'Complete your profile to get personalized insights.';
+    }
+
+    let insight = '';
+
+    // Income-based insights
+    if (annualIncome >= 600000) { // 50K+ monthly
+      insight += 'With your income level, you have great potential for wealth building. ';
+    } else if (annualIncome >= 300000) { // 25K+ monthly
+      insight += 'Your income provides a solid foundation for investment growth. ';
+    } else {
+      insight += 'Starting your investment journey early is a smart move. ';
+    }
+
+    // Goal-based insights
+    if (shortTermGoal.toLowerCase().includes('car') || shortTermGoal.toLowerCase().includes('vehicle')) {
+      insight += 'Your vehicle goal suggests a medium-term investment strategy. ';
+    } else if (shortTermGoal.toLowerCase().includes('house') || shortTermGoal.toLowerCase().includes('property')) {
+      insight += 'Your property goal indicates a long-term wealth-building approach. ';
+    } else {
+      insight += 'Your specific goal will help tailor the right investment strategy. ';
+    }
+
+    // Risk-based insights
+    if (riskTolerance === 'high') {
+      insight += 'Your high risk tolerance allows for more dynamic investment opportunities.';
+    } else if (riskTolerance === 'medium') {
+      insight += 'A balanced portfolio would suit your moderate risk appetite.';
+    } else {
+      insight += 'Conservative investments would align well with your risk profile.';
+    }
+
+    return insight;
+  }
+
+  setRadarChartData() {
+    // Use your logic to get the values for each axis (0-100)
+    const kycData = JSON.parse(localStorage.getItem('kycData') || '{}');
+    this.radarChartData.datasets[0].data = [
+      this.calculateIncomeScore(kycData.monthlyIncome),
+      this.calculateRiskScore(kycData.riskTolerance),
+      kycData.investmentGoal !== 'unsure' ? 75 : 50,
+      (kycData.investmentGoal === 'grow' || kycData.investmentGoal === 'protect') ? 75 : 50,
+      kycData.investmentTimeline === 'yes' ? 75 : 50
+    ];
+  }
+
+  calculateIncomeScore(income: number): number {
+    // Implement your logic to calculate income score
+    return 75; // Placeholder, actual implementation needed
+  }
+
+  calculateRiskScore(risk: string): number {
+    // Implement your logic to calculate risk score
+    return 75; // Placeholder, actual implementation needed
+  }
+
+  updateProfileScore(): void {
+    if (!this.kycForm) return;
+    
+    let score = 0;
+    
+    // Income score (from step2)
+    const annualIncome = this.kycForm.get('step2.annualIncome')?.value;
+    if (annualIncome) {
+      if (annualIncome >= 600000) score += 30; // 50K+ monthly
+      else if (annualIncome >= 300000) score += 20; // 25K+ monthly
+      else score += 10;
+    }
+    
+    // Savings score (from step3)
+    const savings = this.kycForm.get('step3.savings')?.value;
+    if (savings) {
+      if (savings >= 1000000) score += 20;
+      else if (savings >= 500000) score += 15;
+      else score += 10;
+    }
+    
+    // Investments score (from step3)
+    const investments = this.kycForm.get('step3.investments')?.value;
+    if (investments) {
+      if (investments >= 1000000) score += 20;
+      else if (investments >= 500000) score += 15;
+      else score += 10;
+    }
+    
+    // Risk tolerance score (from step5)
+    const riskTolerance = this.kycForm.get('step5.riskTolerance')?.value;
+    if (riskTolerance) {
+      if (riskTolerance === 'high') score += 20;
+      else if (riskTolerance === 'medium') score += 15;
+      else score += 10;
+    }
+    
+    // Investment knowledge score (from step6)
+    const investmentKnowledge = this.kycForm.get('step6.investmentKnowledge')?.value;
+    if (investmentKnowledge) {
+      if (investmentKnowledge === 'advanced') score += 10;
+      else if (investmentKnowledge === 'intermediate') score += 7;
+      else score += 5;
+    }
+    
+    this.profileScore = Math.min(100, score);
+  }
+
+  setAvatarExpression(expression: AvatarExpression): void {
+    this.avatarExpression = expression;
   }
 } 

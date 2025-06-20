@@ -1,40 +1,55 @@
 <div class="kyc-container">
-  <div class="interaction-section">
-    <div class="dashboard-container" [class.typing]="isTyping">
-      <div class="dashboard" [class]="avatarAnimation">
-        <!-- Main Circle -->
-        <div class="main-circle">
-          <div class="pulse-ring"></div>
-          <div class="inner-circle">
-            <div class="icon-container">
-              <fa-icon [icon]="getCurrentIcon()" class="dashboard-icon"></fa-icon>
-            </div>
+  <div class="financial-profile">
+    <div class="profile-header">
+      <h1>Your Financial Profile</h1>
+      <div class="profile-score">
+        <span>Your Profile Score: <strong>{{ profileScore }}</strong></span>
+      </div>
+      <div class="profile-progress">
+        <div class="progress-ring">
+          <svg viewBox="0 0 100 100">
+            <circle class="progress-ring-circle-bg" cx="50" cy="50" r="45"/>
+            <circle class="progress-ring-circle" cx="50" cy="50" r="45" [style.strokeDashoffset]="getProgressOffset()"/>
+          </svg>
+          <div class="progress-text">
+            <span class="percentage">{{ (currentStep / totalSteps) * 100 | number:'1.0-0' }}%</span>
+            <span class="label">Complete</span>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Orbiting Elements -->
-        <div class="orbit-container">
-          <div class="orbit" *ngFor="let orbit of orbits; let i = index" [style.animation-delay]="orbit.delay">
-            <div class="orbit-element" [class]="orbit.class">
-              <span class="element-icon">{{ orbit.icon }}</span>
-              <div class="element-tooltip">{{ orbit.tooltip }}</div>
-            </div>
-          </div>
+    <div class="profile-metrics">
+      <div class="metric-card" *ngIf="kycForm.get('step1.fullName')?.value">
+        <div class="metric-icon">🧑</div>
+        <div class="metric-info">
+          <span class="metric-label">Name</span>
+          <span class="metric-value">{{ kycForm.get('step1.fullName')?.value }}</span>
         </div>
+      </div>
 
-        <!-- Progress Rings -->
-        <div class="progress-rings">
-          <div class="ring" *ngFor="let ring of progressRings" [style.--progress]="ring.progress">
-            <svg viewBox="0 0 100 100">
-              <circle class="ring-bg" cx="50" cy="50" r="45"/>
-              <circle class="ring-progress" cx="50" cy="50" r="45"/>
-            </svg>
-          </div>
+      <div class="metric-card" *ngIf="kycForm.get('step2.annualIncome')?.value">
+        <div class="metric-icon">💰</div>
+        <div class="metric-info">
+          <span class="metric-label">Annual Income</span>
+          <span class="metric-value">{{ kycForm.get('step2.annualIncome')?.value | number:'1.0-0' }} EGP</span>
         </div>
+      </div>
 
-        <!-- Message Display -->
-        <div class="message-display" [class.typing]="isTyping">
-          {{ avatarMessage }}
+      <div class="metric-card" *ngIf="kycForm.get('step5.riskTolerance')?.value">
+        <div class="metric-icon">📊</div>
+        <div class="metric-info">
+          <span class="metric-label">Risk Profile</span>
+          <span class="metric-value">{{ kycForm.get('step5.riskTolerance')?.value }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-insights" *ngIf="currentStep >= 3">
+      <div class="insight-card">
+        <h3>Profile Insights</h3>
+        <div class="insight-content">
+          <p>{{ getProfileInsight() }}</p>
         </div>
       </div>
     </div>
@@ -46,192 +61,152 @@
     </div>
 
     <form [formGroup]="kycForm" (ngSubmit)="onSubmit()">
-      <!-- Step 1: Gender Selection -->
-      <div class="form-step" *ngIf="currentStep === 1">
-        <h2>Select Your Avatar</h2>
+      <!-- Step 1: Basic Information -->
+      <div class="form-step" *ngIf="currentStep === 1" formGroupName="step1">
+        <h2>Let's get to know you!</h2>
         <div class="form-group">
-          <label>
-            <input type="radio" formControlName="gender" value="male" /> Male
-          </label>
-          <label>
-            <input type="radio" formControlName="gender" value="female" /> Female
-          </label>
+          <label for="fullName">What's your full name?</label>
+          <input type="text" id="fullName" formControlName="fullName" placeholder="e.g., Alex Doe">
+        </div>
+        <div class="form-group">
+          <label for="age">How old are you?</label>
+          <input type="number" id="age" formControlName="age" placeholder="e.g., 30" min="18">
+        </div>
+        <div class="form-group">
+          <label>What's your gender?</label>
+          <div class="card-options">
+            <label class="card-option">
+              <input type="radio" formControlName="gender" value="male">
+              <div class="card-content">👨 Male</div>
+            </label>
+            <label class="card-option">
+              <input type="radio" formControlName="gender" value="female">
+              <div class="card-content">👩 Female</div>
+            </label>
+          </div>
         </div>
       </div>
 
-      <!-- Step 2: Personal Information -->
-      <div class="form-step" *ngIf="currentStep === 2" formGroupName="personalInfo">
-        <h2>Personal Information</h2>
+      <!-- Step 2: Occupation & Income -->
+      <div class="form-step" *ngIf="currentStep === 2" formGroupName="step2">
+        <h2>What's your financial situation?</h2>
         <div class="form-group">
-          <label for="fullName">Full Name</label>
-          <input type="text" id="fullName" formControlName="fullName" placeholder="Enter your full name">
+          <label for="occupation">What's your occupation?</label>
+          <input type="text" id="occupation" formControlName="occupation" placeholder="e.g., Software Engineer">
         </div>
-        <div class="form-group">
-          <label for="age">Age</label>
-          <input type="number" id="age" formControlName="age" placeholder="Enter your age">
-        </div>
-        <div class="form-group">
-          <label for="occupation">Occupation if freelancer mention your profession </label>
-          <input type="text" id="occupation" formControlName="occupation" placeholder="Enter your occupation">
-        </div>
-      </div>
-
-      <!-- Step 3: Financial Information -->
-      <div class="form-step" *ngIf="currentStep === 3" formGroupName="financialInfo">
-        <h2>Financial Information</h2>
         <div class="form-group slider-group">
-          <label for="annualIncome">Annual Income (EGP)</label>
+          <label>What's your annual income?</label>
           <div class="slider-container">
-            <input 
-              type="range" 
-              id="annualIncome" 
-              formControlName="annualIncome" 
-              min="1" 
-              max="500000" 
-              step="1000"
-              class="custom-slider"
-            >
+            <input type="range" formControlName="annualIncome" min="12000" max="2400000" step="1000" class="custom-slider">
             <div class="slider-value">
-              <span class="value">{{ kycForm.get('financialInfo.annualIncome')?.value | number:'1.0-0' }}</span>
-              <span class="currency">EGP</span>
+              <span>{{ kycForm.get('step2.annualIncome')?.value | number:'1.0-0' }} EGP</span>
             </div>
-            <div class="slider-labels">
-              <span>1 EGP</span>
-              <span>500K EGP</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Savings & Investments -->
+      <div class="form-step" *ngIf="currentStep === 3" formGroupName="step3">
+        <h2>Tell us about your assets.</h2>
+        <div class="form-group slider-group">
+          <label>What are your current savings?</label>
+          <div class="slider-container">
+            <input type="range" formControlName="savings" min="0" max="5000000" step="1000" class="custom-slider">
+            <div class="slider-value">
+              <span>{{ kycForm.get('step3.savings')?.value | number:'1.0-0' }} EGP</span>
             </div>
           </div>
         </div>
         <div class="form-group slider-group">
-          <label for="savings">Current Savings (EGP)</label>
+          <label>What are your current investments?</label>
           <div class="slider-container">
-            <input 
-              type="range" 
-              id="savings" 
-              formControlName="savings" 
-              min="1" 
-              max="500000" 
-              step="1000"
-              class="custom-slider"
-            >
+            <input type="range" formControlName="investments" min="0" max="5000000" step="1000" class="custom-slider">
             <div class="slider-value">
-              <span class="value">{{ kycForm.get('financialInfo.savings')?.value | number:'1.0-0' }}</span>
-              <span class="currency">EGP</span>
-            </div>
-            <div class="slider-labels">
-              <span>1 EGP</span>
-              <span>500K EGP</span>
-            </div>
-          </div>
-        </div>
-        <div class="form-group slider-group">
-          <label for="investments">Current Investments (EGP)</label>
-          <div class="slider-container">
-            <input 
-              type="range" 
-              id="investments" 
-              formControlName="investments" 
-              min="1" 
-              max="500000" 
-              step="1000"
-              class="custom-slider"
-            >
-            <div class="slider-value">
-              <span class="value">{{ kycForm.get('financialInfo.investments')?.value | number:'1.0-0' }}</span>
-              <span class="currency">EGP</span>
-            </div>
-            <div class="slider-labels">
-              <span>1 EGP</span>
-              <span>500K EGP</span>
+              <span>{{ kycForm.get('step3.investments')?.value | number:'1.0-0' }} EGP</span>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Step 4: Financial Goals -->
-      <div class="form-step" *ngIf="currentStep === 4" formGroupName="goals">
-        <h2>Financial Goals</h2>
-        <div class="form-group slider-group">
-          <label for="shortTermGoal">Short-term Goal Amount (EGP)</label>
-          <div class="slider-container">
-            <input 
-              type="range" 
-              id="shortTermGoal" 
-              formControlName="shortTermGoal" 
-              min="1" 
-              max="500000" 
-              step="1000"
-              class="custom-slider"
-            >
-            <div class="slider-value">
-              <span class="value">{{ kycForm.get('goals.shortTermGoal')?.value | number:'1.0-0' }}</span>
-              <span class="currency">EGP</span>
-            </div>
-            <div class="slider-labels">
-              <span>1 EGP</span>
-              <span>500K EGP</span>
-            </div>
-          </div>
-        </div>
-        <div class="form-group slider-group">
-          <label for="longTermGoal">Long-term Goal Amount (EGP)</label>
-          <div class="slider-container">
-            <input 
-              type="range" 
-              id="longTermGoal" 
-              formControlName="longTermGoal" 
-              min="1" 
-              max="500000" 
-              step="1000"
-              class="custom-slider"
-            >
-            <div class="slider-value">
-              <span class="value">{{ kycForm.get('goals.longTermGoal')?.value | number:'1.0-0' }}</span>
-              <span class="currency">EGP</span>
-            </div>
-            <div class="slider-labels">
-              <span>1 EGP</span>
-              <span>500K EGP</span>
-            </div>
-          </div>
+      <div class="form-step" *ngIf="currentStep === 4" formGroupName="step4">
+        <h2>What are your financial goals?</h2>
+        <div class="form-group">
+          <label for="shortTermGoal">Describe a short-term goal (e.g., vacation, new car).</label>
+          <input type="text" id="shortTermGoal" formControlName="shortTermGoal" placeholder="e.g., Buy a new laptop in 6 months">
         </div>
         <div class="form-group">
-          <label for="riskTolerance">Risk Tolerance</label>
-          <select id="riskTolerance" formControlName="riskTolerance">
-            <option value="">Select your risk tolerance</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
+          <label for="longTermGoal">Describe a long-term goal (e.g., retirement, house). </label>
+          <input type="text" id="longTermGoal" formControlName="longTermGoal" placeholder="e.g., Down payment for a house in 5 years">
         </div>
       </div>
 
-      <!-- Step 5: Investment Preferences -->
-      <div class="form-step" *ngIf="currentStep === 5" formGroupName="preferences">
-        <h2>Investment Preferences</h2>
+      <!-- Step 5: Risk & Style -->
+      <div class="form-step" *ngIf="currentStep === 5" formGroupName="step5">
+        <h2>How do you approach investing?</h2>
         <div class="form-group">
-          <label for="investmentStyle">Investment Style</label>
-          <select id="investmentStyle" formControlName="investmentStyle">
-            <option value="">Select your investment style</option>
-            <option value="conservative">Conservative</option>
-            <option value="moderate">Moderate</option>
-            <option value="aggressive">Aggressive</option>
-          </select>
+          <label>How comfortable are you with investment risks?</label>
+          <div class="card-options">
+            <label class="card-option"><input type="radio" formControlName="riskTolerance" value="low"><div class="card-content">🐢 I prefer low risk</div></label>
+            <label class="card-option"><input type="radio" formControlName="riskTolerance" value="medium"><div class="card-content">🐇 I'm okay with medium risk</div></label>
+            <label class="card-option"><input type="radio" formControlName="riskTolerance" value="high"><div class="card-content">🐆 I'm comfortable with high risk</div></label>
+          </div>
         </div>
         <div class="form-group">
-          <label for="preferredContact">Preferred Contact Method</label>
-          <select id="preferredContact" formControlName="preferredContact">
-            <option value="">Select your preferred contact method</option>
-            <option value="email">Email</option>
-            <option value="phone">Phone</option>
-            <option value="sms">SMS</option>
-          </select>
+          <label>What's your investment style?</label>
+          <div class="card-options">
+            <label class="card-option"><input type="radio" formControlName="investmentStyle" value="hands_on"><div class="card-content">🙌 Hands-on and active</div></label>
+            <label class="card-option"><input type="radio" formControlName="investmentStyle" value="hands_off"><div class="card-content">🧘 Hands-off and passive</div></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6: Knowledge & Contact -->
+      <div class="form-step" *ngIf="currentStep === 6" formGroupName="step6">
+        <h2>Last details before we finish!</h2>
+        <div class="form-group">
+          <label>How would you rate your investment knowledge?</label>
+          <div class="card-options">
+            <label class="card-option"><input type="radio" formControlName="investmentKnowledge" value="beginner"><div class="card-content">🌱 Beginner</div></label>
+            <label class="card-option"><input type="radio" formControlName="investmentKnowledge" value="intermediate"><div class="card-content">🧠 Intermediate</div></label>
+            <label class="card-option"><input type="radio" formControlName="investmentKnowledge" value="advanced"><div class="card-content">🏆 Advanced</div></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>How should we contact you?</label>
+          <div class="card-options">
+            <label class="card-option"><input type="radio" formControlName="preferredContact" value="email"><div class="card-content">📧 Email</div></label>
+            <label class="card-option"><input type="radio" formControlName="preferredContact" value="phone"><div class="card-content">📱 Phone</div></label>
+            <label class="card-option"><input type="radio" formControlName="preferredContact" value="none"><div class="card-content">🙅 No contact</div></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 7: Email Opt-in -->
+      <div class="form-step" *ngIf="currentStep === 7" formGroupName="step7">
+        <div class="email-optin-container">
+          <div class="email-icon">🎉</div>
+          <h2>Unlock Your Full Financial Picture!</h2>
+          <p>
+            Want a <strong>personal analysis</strong>, contact from our <strong>financial analyzers</strong>, or to subscribe to our articles?
+            <br>
+            Add your email below. <strong>All our services are free... for now!</strong>
+          </p>
+          <div class="form-group">
+            <input type="email" id="email" formControlName="email" placeholder="your.email@example.com">
+          </div>
+          <p class="skip-message">You can skip this and still get your results.</p>
         </div>
       </div>
 
       <div class="form-navigation">
         <button type="button" class="btn-secondary" *ngIf="currentStep > 1" (click)="previousStep()">Previous</button>
-        <button type="button" class="btn-primary" *ngIf="currentStep < totalSteps" (click)="nextStep()">Next</button>
-        <button type="submit" class="btn-success" *ngIf="currentStep === totalSteps">Submit</button>
+        <button type="button" class="btn-primary" *ngIf="currentStep < totalSteps" (click)="nextStep()" [disabled]="!isCurrentStepValid()">Next</button>
+        <button type="submit" class="btn-success" *ngIf="currentStep === totalSteps">View My Analysis</button>
+      </div>
+
+      <div *ngIf="showValidationError" class="validation-error">
+        <span>Please fill out all required fields to continue.</span>
       </div>
     </form>
   </div>
