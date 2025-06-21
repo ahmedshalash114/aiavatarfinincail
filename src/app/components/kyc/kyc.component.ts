@@ -727,4 +727,12 @@ export class KYCComponent implements OnInit {
   setAvatarExpression(expression: AvatarExpression): void {
     this.avatarExpression = expression;
   }
+
+  goToLanding(): void {
+    this.router.navigate(['/']);
+  }
+
+  goToInvestmentAnalysis(): void {
+    this.router.navigate(['/investment-analysis']);
+  }
 } 

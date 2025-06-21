@@ -340,9 +340,11 @@ export class ResultsComponent implements OnInit {
   }
 
   startOver(): void {
-    // Clear form data using storage service
-    this.storageService.removeItem('kycFormData');
     this.router.navigate(['/kyc']);
+  }
+
+  goToInvestmentAnalysis(): void {
+    this.router.navigate(['/investment-analysis']);
   }
 
   downloadReport() {

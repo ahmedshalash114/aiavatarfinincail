@@ -23,6 +23,10 @@ import { Router } from '@angular/router';
             Start Your Financial Journey
             <span class="arrow">→</span>
           </button>
+          <button class="cta-button secondary" (click)="startInvestmentAnalysis()">
+            📊 Try Investment Analysis
+            <span class="arrow">→</span>
+          </button>
         </div>
         <div class="hero-image">
           <div class="floating-cards">
@@ -151,6 +155,8 @@ import { Router } from '@angular/router';
       gap: 0.5rem;
       transition: all 0.3s ease;
       box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      margin-right: 1rem;
+      margin-bottom: 1rem;
 
       &:hover {
         transform: translateY(-2px);
@@ -163,6 +169,19 @@ import { Router } from '@angular/router';
 
       .arrow {
         transition: transform 0.3s ease;
+      }
+
+      &.secondary {
+        background: white;
+        color: #6366f1;
+        border: 2px solid #6366f1;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.1);
+
+        &:hover {
+          background: #6366f1;
+          color: white;
+          box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+        }
       }
     }
 
@@ -433,33 +452,33 @@ export class LandingComponent {
   features = [
     {
       icon: '🤖',
-      title: 'AI-Powered Insights',
-      description: 'Get personalized financial advice powered by advanced artificial intelligence.'
+      title: 'AI-Powered Analysis',
+      description: 'Advanced algorithms analyze your financial profile and provide personalized investment recommendations.'
     },
     {
       icon: '📊',
-      title: 'Smart Analytics',
-      description: 'Track your financial health with detailed analytics and visualizations.'
+      title: 'Historical Investment Analysis',
+      description: 'See what your investments could have grown to over the past 5 years with real historical data.'
     },
     {
       icon: '🎯',
-      title: 'Goal Tracking',
-      description: 'Set and monitor your financial goals with smart progress tracking.'
+      title: 'Personalized Strategy',
+      description: 'Get tailored investment strategies based on your risk tolerance, goals, and financial situation.'
     },
     {
-      icon: '💡',
-      title: 'Investment Guidance',
-      description: 'Receive expert investment recommendations based on your risk profile.'
+      icon: '📈',
+      title: 'Real-time Insights',
+      description: 'Monitor your portfolio performance and receive actionable insights to optimize your investments.'
+    },
+    {
+      icon: '🛡️',
+      title: 'Risk Management',
+      description: 'Advanced risk assessment tools help you make informed decisions and protect your investments.'
     },
     {
       icon: '📱',
-      title: 'Easy Access',
-      description: 'Access your financial twin anytime, anywhere through our mobile-friendly platform.'
-    },
-    {
-      icon: '🔒',
-      title: 'Secure & Private',
-      description: 'Your financial data is protected with bank-level security measures.'
+      title: 'Easy to Use',
+      description: 'Intuitive interface makes financial planning accessible to everyone, regardless of experience level.'
     }
   ];
 
@@ -503,5 +522,9 @@ export class LandingComponent {
 
   startJourney() {
     this.router.navigate(['/kyc']);
+  }
+
+  startInvestmentAnalysis() {
+    this.router.navigate(['/investment-analysis']);
   }
 } 
