@@ -3,13 +3,13 @@
 /* ===== GLOBAL RESPONSIVE DESIGN SYSTEM ===== */
 :root {
   /* Color System */
-  --primary-color: #667eea;
+  --primary-color: #3b82f6;
   --primary-dark: #5a6fd8;
-  --secondary-color: #764ba2;
-  --accent-color: #f093fb;
-  --success-color: #4ade80;
-  --warning-color: #fbbf24;
-  --error-color: #f87171;
+  --secondary-color: #8b5cf6;
+  --accent-color: #f59e0b;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
   --info-color: #60a5fa;
   
   /* Neutral Colors */
@@ -65,9 +65,9 @@
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   
   /* Transitions */
-  --transition-fast: 150ms ease-in-out;
-  --transition-normal: 300ms ease-in-out;
-  --transition-slow: 500ms ease-in-out;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
   
   /* Z-Index */
   --z-dropdown: 1000;
@@ -94,7 +94,7 @@ body {
   font-size: var(--font-size-base);
   line-height: 1.6;
   color: var(--gray-900);
-  background-color: var(--white);
+  background-color: var(--gray-50);
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
@@ -282,13 +282,13 @@ body {
 
 .btn-secondary {
   background: var(--white);
-  color: var(--gray-700);
-  border: 2px solid var(--gray-200);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  border-color: var(--primary-color);
-  color: var(--primary-color);
+  background: var(--primary-color);
+  color: var(--white);
   transform: translateY(-2px);
 }
 
@@ -522,3 +522,107 @@ body {
 .border-b { border-bottom: 1px solid var(--gray-200); }
 .border-l { border-left: 1px solid var(--gray-200); }
 .border-r { border-right: 1px solid var(--gray-200); }
+
+/* ===== MOBILE-SPECIFIC FIXES ===== */
+@media (max-width: 767px) {
+  /* Ensure buttons are always visible and properly spaced */
+  .btn {
+    min-height: 48px; /* Larger touch target for mobile */
+    font-size: var(--font-size-base);
+    padding: var(--spacing-4) var(--spacing-6);
+  }
+  
+  /* Prevent content from being hidden behind floating elements */
+  .hero-section {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .cta-buttons {
+    position: relative;
+    z-index: 10;
+    margin-bottom: var(--spacing-6);
+  }
+  
+  /* Ensure proper spacing for mobile */
+  .hero-content {
+    margin-bottom: var(--spacing-6);
+  }
+  
+  .hero-visual {
+    margin-top: var(--spacing-4);
+  }
+  
+  /* Adjust floating cards for mobile */
+  .floating-cards {
+    position: relative;
+    z-index: 5;
+  }
+  
+  .floating-card {
+    position: relative;
+    margin-bottom: var(--spacing-4);
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Skip link for screen readers */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--primary-color);
+  color: var(--white);
+  padding: 8px;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* ===== DARK MODE SUPPORT ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gray-50: #111827;
+    --gray-100: #1f2937;
+    --gray-200: #374151;
+    --gray-300: #4b5563;
+    --gray-400: #6b7280;
+    --gray-500: #9ca3af;
+    --gray-600: #d1d5db;
+    --gray-700: #e5e7eb;
+    --gray-800: #f3f4f6;
+    --gray-900: #f9fafb;
+    --white: #000000;
+  }
+  
+  body {
+    background-color: var(--gray-50);
+    color: var(--gray-900);
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .btn,
+  .navigation,
+  .floating-card {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
