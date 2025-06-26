@@ -1,0 +1,102 @@
+<!-- Mobile Hamburger Menu Button -->
+<button 
+  class="mobile-menu-toggle md:hidden" 
+  (click)="toggleMobileMenu()"
+  [class.active]="isMobileMenuOpen"
+  aria-label="Toggle mobile menu">
+  <span class="hamburger-line"></span>
+  <span class="hamburger-line"></span>
+  <span class="hamburger-line"></span>
+</button>
+
+<!-- Mobile Menu Overlay -->
+<div 
+  class="mobile-menu-overlay md:hidden" 
+  [class.active]="isMobileMenuOpen"
+  (click)="closeMobileMenu()">
+</div>
+
+<!-- Navigation Container -->
+<nav class="navigation" [class.mobile-open]="isMobileMenuOpen" *ngIf="isAuthenticated">
+  <!-- Mobile Header -->
+  <div class="mobile-header md:hidden">
+    <div class="mobile-user-info">
+      <div class="avatar">
+        <fa-icon [icon]="icons.user"></fa-icon>
+      </div>
+      <div class="user-details">
+        <h3>{{ getCurrentUserName() }}</h3>
+        <span class="rank-badge" [class]="getCurrentUserRank()">
+          {{ getCurrentUserRank() }}
+        </span>
+      </div>
+    </div>
+    <button class="close-menu-btn" (click)="closeMobileMenu()" aria-label="Close menu">
+      <fa-icon [icon]="icons.times"></fa-icon>
+    </button>
+  </div>
+
+  <!-- Desktop Header -->
+  <div class="nav-header hidden md:block">
+    <div class="user-info">
+      <div class="avatar">
+        <fa-icon [icon]="icons.user"></fa-icon>
+      </div>
+      <div class="user-details">
+        <h3>{{ getCurrentUserName() }}</h3>
+        <span class="rank-badge" [class]="getCurrentUserRank()">
+          {{ getCurrentUserRank() }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Menu -->
+  <div class="nav-menu">
+    <ul class="nav-list">
+      <li *ngFor="let item of navigationItems; let i = index" class="nav-item" 
+          [style.animation-delay]="(i * 0.1) + 's'">
+        <button 
+          class="nav-link" 
+          [class.active]="isActiveRoute(item.path)"
+          (click)="navigateTo(item.path)">
+          <div class="nav-icon">
+            <fa-icon [icon]="getIcon(item.icon)"></fa-icon>
+          </div>
+          <span class="nav-text">{{ item.label }}</span>
+          <div class="nav-indicator"></div>
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Navigation Footer -->
+  <div class="nav-footer">
+    <button class="logout-btn" (click)="logout()">
+      <fa-icon [icon]="icons.signOut"></fa-icon>
+      <span>Logout</span>
+    </button>
+  </div>
+
+  <!-- Mobile Quick Actions -->
+  <div class="mobile-quick-actions md:hidden">
+    <div class="quick-action-grid">
+      <button class="quick-action-btn" (click)="goToDashboard()">
+        <fa-icon [icon]="icons.home"></fa-icon>
+        <span>Dashboard</span>
+      </button>
+      <button class="quick-action-btn" (click)="goToKYC()">
+        <fa-icon [icon]="icons.userEdit"></fa-icon>
+        <span>Profile</span>
+      </button>
+      <button class="quick-action-btn" (click)="goToInvestmentAnalysis()">
+        <fa-icon [icon]="icons.chartLine"></fa-icon>
+        <span>Analysis</span>
+      </button>
+      <button class="quick-action-btn" (click)="goToResults()">
+        <fa-icon [icon]="icons.chartPie"></fa-icon>
+        <span>Results</span>
+      </button>
+    </div>
+  </div>
+</nav> 

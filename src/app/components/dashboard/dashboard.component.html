@@ -1,0 +1,191 @@
+<div class="dashboard-container">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div class="welcome-section">
+      <h1>Welcome back, {{ userProfile?.fullName }}! 👋</h1>
+      <p class="subtitle">Your Financial Twin is here to guide your journey</p>
+    </div>
+    <div class="profile-badge">
+      <span class="rank-badge" [class]="userProfile?.profileRank">{{ userProfile?.profileRank }}</span>
+      <span class="score">{{ userProfile?.profileScore }}/100</span>
+    </div>
+  </div>
+
+  <!-- Quick Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <fa-icon [icon]="icons.piggyBank"></fa-icon>
+      </div>
+      <div class="stat-content">
+        <h3>Savings Rate</h3>
+        <p class="stat-value" [style.color]="getSavingsRateColor()">
+          {{ (userProfile?.savingsRate || 0) * 100 | number:'1.1-1' }}%
+        </p>
+        <p class="stat-label">of monthly income</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <fa-icon [icon]="icons.chartLine"></fa-icon>
+      </div>
+      <div class="stat-content">
+        <h3>Emergency Fund</h3>
+        <p class="stat-value" [style.color]="getEmergencyFundStatusColor()">
+          {{ (userProfile?.currentSavings || 0) / (userProfile?.monthlyExpenses || 1) | number:'1.1-1' }} months
+        </p>
+        <p class="stat-label">of expenses covered</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <fa-icon [icon]="icons.chartPie"></fa-icon>
+      </div>
+      <div class="stat-content">
+        <h3>Financial Health</h3>
+        <p class="stat-value" [style.color]="getFinancialHealthColor(aiAnalysis?.profile?.financialHealth || 0)">
+          {{ aiAnalysis?.profile?.financialHealth || 0 | number:'1.0-0' }}/100
+        </p>
+        <p class="stat-label">overall score</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <fa-icon [icon]="icons.lightbulb"></fa-icon>
+      </div>
+      <div class="stat-content">
+        <h3>Investment Readiness</h3>
+        <p class="stat-value" [style.color]="getFinancialHealthColor(aiAnalysis?.profile?.investmentReadiness || 0)">
+          {{ aiAnalysis?.profile?.investmentReadiness || 0 | number:'1.0-0' }}/100
+        </p>
+        <p class="stat-label">ready to invest</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="main-content">
+    <!-- Left Column -->
+    <div class="left-column">
+      <!-- AI Recommendations -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2><fa-icon [icon]="icons.lightbulb"></fa-icon> AI Recommendations</h2>
+          <p>Personalized advice based on your profile</p>
+        </div>
+        
+        <div class="recommendations-list">
+          <div *ngFor="let rec of getTopRecommendations()" class="recommendation-item" [class]="rec.priority">
+            <div class="rec-header">
+              <h4>{{ rec.title }}</h4>
+              <span class="priority-badge" [class]="rec.priority">{{ rec.priority }}</span>
+            </div>
+            <p class="rec-description">{{ rec.description }}</p>
+            <div class="rec-actions">
+              <button class="btn-primary" (click)="goToInvestmentAnalysis()">Learn More</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial Insights -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2><fa-icon [icon]="icons.info"></fa-icon> Financial Insights</h2>
+          <p>Key observations about your financial health</p>
+        </div>
+        
+        <div class="insights-list">
+          <div *ngFor="let insight of getCriticalInsights()" class="insight-item" [class]="insight.severity">
+            <div class="insight-icon">
+              <fa-icon [icon]="getSeverityIcon(insight.severity)" [style.color]="getSeverityColor(insight.severity)"></fa-icon>
+            </div>
+            <div class="insight-content">
+              <h4>{{ insight.title }}</h4>
+              <p>{{ insight.message }}</p>
+              <div *ngIf="insight.actionItems" class="action-items">
+                <span *ngFor="let action of insight.actionItems" class="action-tag">{{ action }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="right-column">
+      <!-- Financial Health Chart -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2><fa-icon [icon]="icons.chartPie"></fa-icon> Financial Health Overview</h2>
+        </div>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="financialHealthChartData"
+            [options]="financialHealthChartOptions"
+            [type]="'doughnut'">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Emergency Fund Progress -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2>Emergency Fund Progress</h2>
+          <p>Target: 6 months of expenses</p>
+        </div>
+        <div class="chart-container">
+          <canvas baseChart
+            [data]="savingsProgressChartData"
+            [options]="savingsProgressChartOptions"
+            [type]="'bar'">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Next Steps -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2>Next Steps</h2>
+          <p>Your personalized action plan</p>
+        </div>
+        <div class="next-steps-list">
+          <div *ngFor="let step of aiAnalysis?.nextSteps; let i = index" class="step-item">
+            <div class="step-number">{{ i + 1 }}</div>
+            <div class="step-content">
+              <p>{{ step }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cultural Insights -->
+      <div *ngIf="aiAnalysis?.culturalInsights" class="section-card">
+        <div class="section-header">
+          <h2>Cultural Insights</h2>
+          <p>Egypt-specific financial wisdom</p>
+        </div>
+        <div class="cultural-insights">
+          <div *ngFor="let insight of aiAnalysis?.culturalInsights" class="cultural-insight">
+            <p>{{ insight }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button class="btn-secondary" (click)="goToKYC()">
+      <fa-icon [icon]="icons.chartLine"></fa-icon>
+      Update Profile
+    </button>
+    <button class="btn-primary" (click)="goToInvestmentAnalysis()">
+      <fa-icon [icon]="icons.chartPie"></fa-icon>
+      Investment Analysis
+    </button>
+  </div>
+</div> 

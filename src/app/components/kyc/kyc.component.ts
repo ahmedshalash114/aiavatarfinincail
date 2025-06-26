@@ -526,6 +526,9 @@ export class KYCComponent implements OnInit {
         profileRank: this.getProfileRankLabel()
       };
 
+      // Store KYC data locally for the dashboard
+      this.storageService.setItem('kycData', kycData);
+
       // Send data to backend
       this.kycApiService.submitKYCData(kycData).subscribe({
         next: (response) => {
@@ -533,14 +536,14 @@ export class KYCComponent implements OnInit {
           // Store form data locally as well
           this.storageService.setItem('kycFormData', this.kycForm.value);
           this.storageService.setItem('kycApiResponse', response);
-          // Navigate to results
-          this.router.navigate(['/results']);
+          // Navigate to dashboard instead of results
+          this.router.navigate(['/dashboard']);
         },
         error: (error) => {
           console.error('Error submitting KYC data:', error);
-          // Still navigate to results even if API call fails
+          // Still navigate to dashboard even if API call fails
           this.storageService.setItem('kycFormData', this.kycForm.value);
-          this.router.navigate(['/results']);
+          this.router.navigate(['/dashboard']);
         }
       });
     }

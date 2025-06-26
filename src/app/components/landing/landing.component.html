@@ -1,0 +1,121 @@
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <h1 class="main-title">
+      <span class="gradient-text">Your Personal</span>
+      <br>
+      Financial Twin
+    </h1>
+    <p class="hero-subtitle">
+      Experience the future of personal finance management with AI-powered insights and personalized investment strategies.
+    </p>
+    <div class="cta-buttons">
+      <button class="btn btn-primary btn-lg" (click)="startJourney()">
+        Start Your Financial Journey
+        <fa-icon [icon]="icons.arrowRight"></fa-icon>
+      </button>
+      <button class="btn btn-secondary btn-lg" (click)="startInvestmentAnalysis()">
+        <fa-icon [icon]="icons.chartLine"></fa-icon>
+        Try Investment Analysis
+      </button>
+    </div>
+  </div>
+  
+  <div class="hero-visual">
+    <div class="floating-cards">
+      <div class="floating-card" *ngFor="let card of floatingCards; let i = index" 
+           [style.animation-delay]="card.delay" [class]="'card-' + (i + 1)">
+        <div class="card-icon">
+          <fa-icon [icon]="getIcon(card.icon)"></fa-icon>
+        </div>
+        <div class="card-content">
+          <h3>{{ card.title }}</h3>
+          <p>{{ card.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Why Choose Financial Twin?</h2>
+      <p class="section-subtitle">Discover the power of AI-driven financial management</p>
+    </div>
+    
+    <div class="features-grid">
+      <div class="feature-card" *ngFor="let feature of features; let i = index" 
+           [style.animation-delay]="(i * 0.1) + 's'">
+        <div class="feature-icon">
+          <fa-icon [icon]="getIcon(feature.icon)"></fa-icon>
+        </div>
+        <h3>{{ feature.title }}</h3>
+        <p>{{ feature.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-subtitle">Get started in just 3 simple steps</p>
+    </div>
+    
+    <div class="steps-container">
+      <div class="step" *ngFor="let step of steps; let i = index">
+        <div class="step-number">{{ i + 1 }}</div>
+        <div class="step-content">
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">What Our Users Say</h2>
+      <p class="section-subtitle">Join thousands of satisfied users</p>
+    </div>
+    
+    <div class="testimonials-grid">
+      <div class="testimonial-card" *ngFor="let testimonial of testimonials">
+        <div class="testimonial-content">
+          <div class="quote-icon">
+            <fa-icon [icon]="icons.quote"></fa-icon>
+          </div>
+          <p class="quote">{{ testimonial.quote }}</p>
+          <div class="author">
+            <div class="author-avatar">{{ testimonial.avatar }}</div>
+            <div class="author-info">
+              <h4>{{ testimonial.name }}</h4>
+              <p>{{ testimonial.title }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-content">
+      <h2>Ready to Transform Your Financial Future?</h2>
+      <p>Join thousands of users who are already making smarter financial decisions with their AI-powered Financial Twin.</p>
+      <button class="btn btn-primary btn-lg" (click)="startJourney()">
+        Get Started Now
+        <fa-icon [icon]="icons.arrowRight"></fa-icon>
+      </button>
+    </div>
+  </div>
+</section> 

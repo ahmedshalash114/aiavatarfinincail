@@ -1,0 +1,360 @@
+<div class="profile-container">
+  <!-- Header -->
+  <div class="profile-header">
+    <div class="header-content">
+      <h1><fa-icon [icon]="icons.user"></fa-icon> Profile Management</h1>
+      <p>Manage your financial profile and goals</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-secondary" (click)="goToDashboard()">
+        <fa-icon [icon]="icons.chartLine"></fa-icon>
+        Dashboard
+      </button>
+      <button class="btn-primary" (click)="goToInvestmentAnalysis()">
+        <fa-icon [icon]="icons.target"></fa-icon>
+        Investment Analysis
+      </button>
+    </div>
+  </div>
+
+  <!-- Profile Overview -->
+  <div class="profile-overview">
+    <div class="overview-card">
+      <div class="overview-header">
+        <h2>Profile Overview</h2>
+        <button class="btn-edit" (click)="toggleEdit()">
+          <fa-icon [icon]="isEditing ? icons.times : icons.edit"></fa-icon>
+          {{ isEditing ? 'Cancel' : 'Edit' }}
+        </button>
+      </div>
+      
+      <div class="overview-stats">
+        <div class="stat-item">
+          <span class="stat-label">Profile Rank</span>
+          <span class="stat-value rank-badge" [class]="userProfile?.profileRank">
+            {{ userProfile?.profileRank }}
+          </span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Profile Score</span>
+          <span class="stat-value">{{ userProfile?.profileScore }}/100</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Savings Rate</span>
+          <span class="stat-value" [style.color]="getSavingsRateColor()">
+            {{ (userProfile?.savingsRate || 0) * 100 | number:'1.1-1' }}%
+          </span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Emergency Fund</span>
+          <span class="stat-value" [style.color]="getEmergencyFundStatusColor()">
+            {{ userProfile?.emergencyFundStatus }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Profile Form -->
+    <div class="form-section">
+      <div class="section-header">
+        <h2>Personal Information</h2>
+        <p>Update your financial profile details</p>
+      </div>
+      
+      <form [formGroup]="profileForm" class="profile-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input 
+              type="text" 
+              id="fullName" 
+              formControlName="fullName"
+              [readonly]="!isEditing"
+              [class.readonly]="!isEditing">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+              type="email" 
+              id="email" 
+              formControlName="email"
+              [readonly]="!isEditing"
+              [class.readonly]="!isEditing">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="age">Age</label>
+            <input 
+              type="number" 
+              id="age" 
+              formControlName="age"
+              [readonly]="!isEditing"
+              [class.readonly]="!isEditing">
+          </div>
+          <div class="form-group">
+            <label for="occupation">Occupation</label>
+            <input 
+              type="text" 
+              id="occupation" 
+              formControlName="occupation"
+              [readonly]="!isEditing"
+              [class.readonly]="!isEditing">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="monthlyIncome">Monthly Income (EGP)</label>
+            <input 
+              type="number" 
+              id="monthlyIncome" 
+              formControlName="monthlyIncome"
+              [readonly]="!isEditing"
+              [class.readonly]="!isEditing">
+          </div>
+          <div class="form-group">
+            <label for="monthlyExpenses">Monthly Expenses (EGP)</label>
+            <input 
+              type="number" 
+              id="monthlyExpenses" 
+              formControlName="monthlyExpenses"
+              [readonly]="!isEditing"
+              [class.readonly]="!isEditing">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="currentSavings">Current Savings (EGP)</label>
+            <input 
+              type="number" 
+              id="currentSavings" 
+              formControlName="currentSavings"
+              [readonly]="!isEditing"
+              [class.readonly]="!isEditing">
+          </div>
+          <div class="form-group">
+            <label for="currentInvestments">Current Investments (EGP)</label>
+            <input 
+              type="number" 
+              id="currentInvestments" 
+              formControlName="currentInvestments"
+              [readonly]="!isEditing"
+              [class.readonly]="!isEditing">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="riskTolerance">Risk Tolerance</label>
+            <select 
+              id="riskTolerance" 
+              formControlName="riskTolerance"
+              [disabled]="!isEditing"
+              [class.readonly]="!isEditing">
+              <option value="">Select Risk Tolerance</option>
+              <option *ngFor="let option of riskToleranceOptions" [value]="option.value">
+                {{ option.label }} - {{ option.description }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="investmentTimeline">Investment Timeline</label>
+            <select 
+              id="investmentTimeline" 
+              formControlName="investmentTimeline"
+              [disabled]="!isEditing"
+              [class.readonly]="!isEditing">
+              <option value="">Select Timeline</option>
+              <option *ngFor="let option of timelineOptions" [value]="option.value">
+                {{ option.label }} - {{ option.description }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="shortTermGoal">Short-term Goal</label>
+            <textarea 
+              id="shortTermGoal" 
+              formControlName="shortTermGoal"
+              [readonly]="!isEditing"
+              [class.readonly]="!isEditing"
+              rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="longTermGoal">Long-term Goal</label>
+            <textarea 
+              id="longTermGoal" 
+              formControlName="longTermGoal"
+              [readonly]="!isEditing"
+              [class.readonly]="!isEditing"
+              rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="targetSavingsAmount">Target Savings Amount (EGP)</label>
+            <input 
+              type="number" 
+              id="targetSavingsAmount" 
+              formControlName="targetSavingsAmount"
+              [readonly]="!isEditing"
+              [class.readonly]="!isEditing">
+          </div>
+          <div class="form-group">
+            <label for="targetInvestmentAmount">Target Investment Amount (EGP)</label>
+            <input 
+              type="number" 
+              id="targetInvestmentAmount" 
+              formControlName="targetInvestmentAmount"
+              [readonly]="!isEditing"
+              [class.readonly]="!isEditing">
+          </div>
+        </div>
+
+        <div class="form-actions" *ngIf="isEditing">
+          <button type="button" class="btn-secondary" (click)="toggleEdit()">
+            <fa-icon [icon]="icons.times"></fa-icon>
+            Cancel
+          </button>
+          <button type="button" class="btn-primary" (click)="saveProfile()" [disabled]="!profileForm.valid">
+            <fa-icon [icon]="icons.save"></fa-icon>
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Financial Goals -->
+    <div class="goals-section">
+      <div class="section-header">
+        <h2><fa-icon [icon]="icons.target"></fa-icon> Financial Goals</h2>
+        <p>Track your financial objectives and progress</p>
+        <button class="btn-add" (click)="toggleEditGoals()">
+          <fa-icon [icon]="isEditingGoals ? icons.times : icons.edit"></fa-icon>
+          {{ isEditingGoals ? 'Cancel' : 'Add Goal' }}
+        </button>
+      </div>
+
+      <!-- Add Goal Form -->
+      <form *ngIf="isEditingGoals" [formGroup]="goalsForm" class="goal-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="goalName">Goal Name</label>
+            <input type="text" id="goalName" formControlName="name">
+          </div>
+          <div class="form-group">
+            <label for="goalCategory">Category</label>
+            <select id="goalCategory" formControlName="category">
+              <option value="">Select Category</option>
+              <option *ngFor="let cat of goalCategories" [value]="cat.value">
+                {{ cat.icon }} {{ cat.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="targetAmount">Target Amount (EGP)</label>
+            <input type="number" id="targetAmount" formControlName="targetAmount">
+          </div>
+          <div class="form-group">
+            <label for="currentAmount">Current Amount (EGP)</label>
+            <input type="number" id="currentAmount" formControlName="currentAmount">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="targetDate">Target Date</label>
+            <input type="date" id="targetDate" formControlName="targetDate">
+          </div>
+          <div class="form-group">
+            <label for="priority">Priority</label>
+            <select id="priority" formControlName="priority">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="monthlyContribution">Monthly Contribution (EGP)</label>
+            <input type="number" id="monthlyContribution" formControlName="monthlyContribution">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="toggleEditGoals()">
+            <fa-icon [icon]="icons.times"></fa-icon>
+            Cancel
+          </button>
+          <button type="button" class="btn-primary" (click)="addGoal()" [disabled]="!goalsForm.valid">
+            <fa-icon [icon]="icons.save"></fa-icon>
+            Add Goal
+          </button>
+        </div>
+      </form>
+
+      <!-- Goals List -->
+      <div class="goals-list">
+        <div *ngFor="let goal of financialGoals" class="goal-item">
+          <div class="goal-header">
+            <div class="goal-info">
+              <h3>{{ goal.name }}</h3>
+              <span class="goal-category">
+                {{ getCategoryIcon(goal.category) }} {{ getCategoryLabel(goal.category) }}
+              </span>
+            </div>
+            <div class="goal-actions">
+              <span class="priority-badge" [style.background-color]="getPriorityColor(goal.priority)">
+                {{ goal.priority }}
+              </span>
+              <button class="btn-delete" (click)="deleteGoal(goal.id)">
+                <fa-icon [icon]="icons.times"></fa-icon>
+              </button>
+            </div>
+          </div>
+          
+          <div class="goal-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" 
+                   [style.width.%]="getGoalProgress(goal)"
+                   [style.background-color]="getGoalProgressColor(getGoalProgress(goal))">
+              </div>
+            </div>
+            <div class="progress-text">
+              {{ goal.currentAmount | number }} / {{ goal.targetAmount | number }} EGP
+              ({{ getGoalProgress(goal) | number:'1.0-1' }}%)
+            </div>
+          </div>
+          
+          <div class="goal-details">
+            <div class="detail-item">
+              <span class="label">Target Date:</span>
+              <span class="value">{{ goal.targetDate | date:'mediumDate' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Monthly Contribution:</span>
+              <span class="value">{{ goal.monthlyContribution | number }} EGP</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
