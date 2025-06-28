@@ -13,7 +13,8 @@ import {
   faArrowDown,
   faExclamationTriangle,
   faCheckCircle,
-  faInfoCircle
+  faInfoCircle,
+  faDollarSign
 } from '@fortawesome/free-solid-svg-icons';
 
 import { UserProfile } from '../../models/user-profile.model';
@@ -42,7 +43,8 @@ export class DashboardComponent implements OnInit {
     arrowDown: faArrowDown,
     warning: faExclamationTriangle,
     success: faCheckCircle,
-    info: faInfoCircle
+    info: faInfoCircle,
+    dollarSign: faDollarSign
   };
 
   // Chart configurations
@@ -265,6 +267,10 @@ export class DashboardComponent implements OnInit {
 
   goToInvestmentAnalysis(): void {
     this.router.navigate(['/investment-analysis']);
+  }
+
+  goToExchangeRatePrediction(): void {
+    this.router.navigate(['/exchange-rate-prediction']);
   }
 
   getSeverityIcon(severity: string) {

@@ -12,6 +12,7 @@ import {
   faUser,
   faCog,
   faLightbulb,
+  faDollarSign,
   IconDefinition
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -33,7 +34,8 @@ export class LandingComponent {
     quote: faQuoteLeft,
     user: faUser,
     cog: faCog,
-    lightbulb: faLightbulb
+    lightbulb: faLightbulb,
+    dollarSign: faDollarSign
   };
 
   floatingCards = [
@@ -138,5 +140,9 @@ export class LandingComponent {
 
   startInvestmentAnalysis() {
     this.router.navigate(['/investment-analysis']);
+  }
+
+  goToExchangeRate() {
+    this.router.navigate(['/exchange-rate-prediction']);
   }
 } 

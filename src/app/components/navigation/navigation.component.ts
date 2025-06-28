@@ -11,6 +11,7 @@ import {
   faSignOutAlt,
   faTimes,
   faUserEdit,
+  faDollarSign,
   IconDefinition
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -44,13 +45,15 @@ export class NavigationComponent implements OnInit {
     cog: faCog,
     signOut: faSignOutAlt,
     times: faTimes,
-    userEdit: faUserEdit
+    userEdit: faUserEdit,
+    dollarSign: faDollarSign
   };
 
   navigationItems: NavigationItem[] = [
     { path: '/dashboard', label: 'Dashboard', icon: 'home' },
     { path: '/profile', label: 'Profile', icon: 'user' },
     { path: '/investment-analysis', label: 'Investment Analysis', icon: 'chartPie' },
+    { path: '/exchange-rate-prediction', label: 'EGP/USD Predictor', icon: 'dollarSign' },
     { path: '/kyc', label: 'Update KYC', icon: 'cog' }
   ];
 
@@ -127,6 +130,11 @@ export class NavigationComponent implements OnInit {
 
   goToInvestmentAnalysis(): void {
     this.router.navigate(['/investment-analysis']);
+    this.closeMobileMenu();
+  }
+
+  goToExchangeRatePrediction(): void {
+    this.router.navigate(['/exchange-rate-prediction']);
     this.closeMobileMenu();
   }
 

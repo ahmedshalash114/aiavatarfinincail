@@ -64,6 +64,20 @@
         <p class="stat-label">ready to invest</p>
       </div>
     </div>
+
+    <div class="stat-card exchange-rate-card" (click)="goToExchangeRatePrediction()">
+      <div class="stat-icon">
+        <fa-icon [icon]="icons.dollarSign"></fa-icon>
+      </div>
+      <div class="stat-content">
+        <h3>EGP/USD Predictor</h3>
+        <p class="stat-value">55-57</p>
+        <p class="stat-label">2026 prediction</p>
+        <div class="card-overlay">
+          <span>Click to explore</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Main Content Grid -->
@@ -186,6 +200,10 @@
     <button class="btn-primary" (click)="goToInvestmentAnalysis()">
       <fa-icon [icon]="icons.chartPie"></fa-icon>
       Investment Analysis
+    </button>
+    <button class="btn-exchange-rate" (click)="goToExchangeRatePrediction()">
+      <fa-icon [icon]="icons.dollarSign"></fa-icon>
+      EGP/USD Predictor
     </button>
   </div>
 </div> 

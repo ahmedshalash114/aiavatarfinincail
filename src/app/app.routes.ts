@@ -6,6 +6,7 @@ import { InvestmentAnalysisComponent } from './components/investment-analysis/in
 import { InvestmentResultsComponent } from './components/investment-results/investment-results.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { ExchangeRatePredictionComponent } from './components/exchange-rate-prediction/exchange-rate-prediction.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -15,5 +16,6 @@ export const routes: Routes = [
   { path: 'investment-results', component: InvestmentResultsComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'profile', component: ProfileComponent },
+  { path: 'exchange-rate-prediction', component: ExchangeRatePredictionComponent },
   { path: '**', redirectTo: '' }
 ];

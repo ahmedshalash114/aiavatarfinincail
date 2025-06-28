@@ -1,0 +1,261 @@
+<div class="exchange-rate-prediction">
+  <div class="container">
+    <!-- Header Section -->
+    <div class="header-section">
+      <h1 class="main-title">
+        <span class="egypt-flag">🇪🇬</span>
+        Egyptian Exchange Rate Predictor
+        <span class="us-flag">🇺🇸</span>
+      </h1>
+      <p class="subtitle">
+        Predict EGP/USD exchange rates using the proven Egyptian economic model (1992-present)
+      </p>
+    </div>
+
+    <!-- Your Financial Twin Prediction -->
+    <div class="financial-twin-prediction" *ngIf="financialTwinPrediction">
+      <div class="prediction-card">
+        <div class="card-header">
+          <h3>🤖 Your Financial Twin's 2026 Prediction</h3>
+          <span class="confidence-badge" [ngClass]="getConfidenceColor(financialTwinPrediction.confidence)">
+            {{ financialTwinPrediction.confidence }} confidence
+          </span>
+        </div>
+        <div class="prediction-content">
+          <div class="predicted-rate">
+            <span class="rate-label">Predicted EGP/USD for 2026:</span>
+            <span class="rate-value">55.50</span>
+          </div>
+          <p class="prediction-notes">{{ financialTwinPrediction.notes }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Form Section -->
+    <div class="form-section">
+      <div class="form-card">
+        <h3>📊 Calculate Your Own Prediction</h3>
+        <form [formGroup]="predictionForm" (ngSubmit)="calculatePrediction()">
+          <div class="form-grid">
+            <!-- Egypt Inflation Rate -->
+            <div class="form-group">
+              <label for="egyptInflationRate">
+                <span class="egypt-flag">🇪🇬</span>
+                Egypt Inflation Rate (%)
+              </label>
+              <input
+                type="number"
+                id="egyptInflationRate"
+                formControlName="egyptInflationRate"
+                class="form-control"
+                placeholder="0-100"
+                step="0.1"
+              />
+              <div class="error-message" *ngIf="predictionForm.get('egyptInflationRate')?.invalid && predictionForm.get('egyptInflationRate')?.touched">
+                <span *ngIf="predictionForm.get('egyptInflationRate')?.errors?.['required']">Egypt inflation rate is required</span>
+                <span *ngIf="predictionForm.get('egyptInflationRate')?.errors?.['min']">Rate must be at least 0%</span>
+                <span *ngIf="predictionForm.get('egyptInflationRate')?.errors?.['max']">Rate cannot exceed 100%</span>
+              </div>
+            </div>
+
+            <!-- US Inflation Rate -->
+            <div class="form-group">
+              <label for="usInflationRate">
+                <span class="us-flag">🇺🇸</span>
+                US Inflation Rate (%)
+              </label>
+              <input
+                type="number"
+                id="usInflationRate"
+                formControlName="usInflationRate"
+                class="form-control"
+                placeholder="0-100"
+                step="0.1"
+              />
+              <div class="error-message" *ngIf="predictionForm.get('usInflationRate')?.invalid && predictionForm.get('usInflationRate')?.touched">
+                <span *ngIf="predictionForm.get('usInflationRate')?.errors?.['required']">US inflation rate is required</span>
+                <span *ngIf="predictionForm.get('usInflationRate')?.errors?.['min']">Rate must be at least 0%</span>
+                <span *ngIf="predictionForm.get('usInflationRate')?.errors?.['max']">Rate cannot exceed 100%</span>
+              </div>
+            </div>
+
+            <!-- Current Exchange Rate -->
+            <div class="form-group">
+              <label for="currentExchangeRate">
+                💱 Current EGP/USD Rate
+              </label>
+              <input
+                type="number"
+                id="currentExchangeRate"
+                formControlName="currentExchangeRate"
+                class="form-control"
+                placeholder="Current rate"
+                step="0.01"
+              />
+              <div class="error-message" *ngIf="predictionForm.get('currentExchangeRate')?.invalid && predictionForm.get('currentExchangeRate')?.touched">
+                <span *ngIf="predictionForm.get('currentExchangeRate')?.errors?.['required']">Current exchange rate is required</span>
+                <span *ngIf="predictionForm.get('currentExchangeRate')?.errors?.['min']">Rate must be greater than 0</span>
+              </div>
+            </div>
+
+            <!-- Target Year -->
+            <div class="form-group">
+              <label for="targetYear">
+                📅 Target Year
+              </label>
+              <input
+                type="number"
+                id="targetYear"
+                formControlName="targetYear"
+                class="form-control"
+                placeholder="Target year"
+                min="2024"
+              />
+              <div class="error-message" *ngIf="predictionForm.get('targetYear')?.invalid && predictionForm.get('targetYear')?.touched">
+                <span *ngIf="predictionForm.get('targetYear')?.errors?.['required']">Target year is required</span>
+                <span *ngIf="predictionForm.get('targetYear')?.errors?.['min']">Year cannot be in the past</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Error Messages -->
+          <div class="global-errors" *ngIf="errors.length > 0">
+            <div class="error-item" *ngFor="let error of errors">
+              ⚠️ {{ error }}
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+              <span *ngIf="isLoading">🔄 Calculating...</span>
+              <span *ngIf="!isLoading">🧮 Calculate Prediction</span>
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="resetForm()">
+              🔄 Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-section" *ngIf="calculation && showResults">
+      <div class="results-card">
+        <h3>📈 Prediction Results</h3>
+        
+        <div class="calculation-breakdown">
+          <div class="formula-section">
+            <h4>🧮 Calculation Formula</h4>
+            <div class="formula-box">
+              {{ calculation.formula }}
+            </div>
+          </div>
+
+          <div class="results-grid">
+            <div class="result-item">
+              <span class="result-label">Inflation Differential:</span>
+              <span class="result-value" [ngClass]="calculation.inflationDifferential > 0 ? 'text-danger' : 'text-success'">
+                {{ formatNumber(calculation.inflationDifferential) }}%
+              </span>
+            </div>
+            
+            <div class="result-item">
+              <span class="result-label">Rate Adjustment:</span>
+              <span class="result-value" [ngClass]="calculation.rateAdjustment > 0 ? 'text-danger' : 'text-success'">
+                {{ formatNumber(calculation.rateAdjustment) }} EGP
+              </span>
+            </div>
+            
+            <div class="result-item highlight">
+              <span class="result-label">Predicted Rate:</span>
+              <span class="result-value predicted-rate">
+                {{ formatNumber(calculation.predictedRate) }} EGP/USD
+              </span>
+            </div>
+          </div>
+
+          <div class="interpretation">
+            <h4>📊 Interpretation</h4>
+            <p>{{ getDifferentialInterpretation(calculation.inflationDifferential) }}</p>
+            <div class="explanation-box">
+              <pre>{{ calculation.explanation }}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historical Accuracy Section -->
+    <div class="historical-section">
+      <div class="historical-card">
+        <div class="card-header">
+          <h3>📊 Historical Model Accuracy</h3>
+          <button class="btn btn-outline" (click)="toggleHistoricalData()">
+            {{ showHistoricalData ? 'Hide' : 'Show' }} Historical Data
+          </button>
+        </div>
+        
+        <div class="accuracy-summary">
+          <div class="accuracy-item">
+            <span class="accuracy-label">Average Accuracy:</span>
+            <span class="accuracy-value" [ngClass]="getAccuracyColor(averageAccuracy)">
+              {{ formatNumber(averageAccuracy) }}%
+            </span>
+          </div>
+        </div>
+
+        <div class="historical-table" *ngIf="showHistoricalData">
+          <table>
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>Predicted Rate</th>
+                <th>Actual Rate</th>
+                <th>Accuracy</th>
+                <th>Inflation Differential</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of historicalAccuracy">
+                <td>{{ item.year }}</td>
+                <td>{{ formatNumber(item.predictedRate) }}</td>
+                <td>{{ formatNumber(item.actualRate) }}</td>
+                <td [ngClass]="getAccuracyColor(item.accuracy)">
+                  {{ formatNumber(item.accuracy) }}%
+                </td>
+                <td [ngClass]="item.inflationDifferential > 0 ? 'text-danger' : 'text-success'">
+                  {{ formatNumber(item.inflationDifferential) }}%
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model Information -->
+    <div class="model-info">
+      <div class="info-card">
+        <h3>ℹ️ About the Egyptian Economic Model</h3>
+        <div class="info-content">
+          <p>
+            This prediction model is based on the proven relationship between inflation differentials 
+            and exchange rate movements in Egypt, validated from 1992 to present. The model assumes 
+            that the Egyptian pound's value relative to the US dollar is primarily influenced by 
+            the difference in inflation rates between the two countries.
+          </p>
+          <div class="key-points">
+            <h4>Key Principles:</h4>
+            <ul>
+              <li>Higher Egyptian inflation → EGP depreciation</li>
+              <li>Lower Egyptian inflation → EGP appreciation</li>
+              <li>Equal inflation rates → Stable exchange rate</li>
+              <li>Model accuracy improves with larger inflation differentials</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
